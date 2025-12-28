@@ -6,11 +6,11 @@ import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 
 import { useRouter } from 'expo-router';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FormAction, FormState, useForm } from '../../util/match-form';
+import { FormAction, FormState, useForm } from '../../../components/match-form';
 
 import { Database } from '@/app/supabasetypes';
+import Checkbox from '../../../components/checkbox';
 import { LiveDataInsert, supabase } from '../../supabase';
-import Checkbox from '../../util/checkbox';
 
 // inside your component
 const router = useRouter();

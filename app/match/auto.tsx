@@ -1,40 +1,16 @@
 // @ts-ignore
-import AlgaeImage from '@/assets/images/algae.png';
 // @ts-ignore
-import ReefImage from '@/assets/images/reef.png';
 import { Picker } from '@react-native-picker/picker';
 import React from 'react';
-import { Animated, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import Checkbox from '../../components/checkbox';
+import Counter from '../../components/counter';
+import { useForm } from '../../components/match-form';
 import { Database } from '../supabasetypes';
-import Checkbox from '../util/checkbox';
-import Counter from '../util/counter';
-import { useForm } from '../util/match-form';
 
 const AutoScreen = () => {
 
     const { state, dispatch } = useForm();
-
-    const rotateAnim = React.useRef(new Animated.Value(0)).current;
-    const [rotated, setRotated] = React.useState(false);
-
-    const rotateInterpolate = rotateAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['0deg', '360deg'],
-    });
-
-    const animatedStyle = {
-        transform: [{ rotate: rotateInterpolate }],
-    };
-
-    const handleAlgaePress = () => {
-        Animated.timing(rotateAnim, {
-            toValue: rotated ? 0 : 1,
-            duration: 500,
-            useNativeDriver: true,
-        }).start(() => {
-            setRotated(!rotated);
-        });
-    };
 
     return (
         <ScrollView style={styles.scrollView}>
@@ -46,7 +22,7 @@ const AutoScreen = () => {
                     <Picker
                         style={styles.input}
                         selectedValue={state.selectedStartPosition}
-                        onValueChange={(value:Database['public']['Enums']['autostartpositionsreefscape']) =>
+                        onValueChange={(value: Database['public']['Enums']['autostartpositionsreefscape']) =>
                             dispatch({ type: 'UPDATE_FIELD', field: 'selectedStartPosition', value })
                         }>
                         <Picker.Item label="Far" value="Far" />
@@ -55,25 +31,7 @@ const AutoScreen = () => {
                     </Picker>
                 </View>
 
-                <View style={styles.reefContainer}>
-                    <Image source={ReefImage} style={styles.reefImage}></Image>
-                    <View style={styles.reefOperationsContainer}>
-
-                        {/* LEVEL FOUR */}
-                        <Counter field="autoL4Count" label="L4:" type="coral-make"></Counter>
-
-                        {/* LEVEL THREE */}
-                        <Counter field="autoL3Count" label="L3:" type="coral-make"></Counter>
-
-                        {/* LEVEL TWO */}
-                        <Counter field="autoL2Count" label="L2:" type="coral-make"></Counter>
-
-                        {/* LEVEL ONE */}
-                        <Counter field="autoL1Count" label="L1:" type="coral-make"></Counter>
-
-
-                    </View>
-                </View>
+                <Counter field="autoL4Count" label="L4:" type="coral-make"></Counter>
 
                 {/* MISS */}
                 <Counter field="autoMissCoralCount" label="Missed coral:" type="coral-miss"></Counter>
@@ -85,15 +43,6 @@ const AutoScreen = () => {
                         <Counter field="autoNetCount" label="Made Net:" type="algae-make"></Counter>
 
                         <Counter field="autoMissNetCount" label="Missed Net:" type="algae-miss"></Counter>
-                    </View>
-
-                    <View style={styles.netContainer}>
-                    <Counter field="autoProcessorCount" label="Processor:" type="algae-make"></Counter>
-
-
-                        <TouchableOpacity style={[styles.algaeOperation, { backgroundColor: 'transparent' }]} onPress={handleAlgaePress}>
-                            <Animated.Image source={AlgaeImage} style={[styles.algaeImage, animatedStyle]}></Animated.Image>
-                        </TouchableOpacity>
                     </View>
 
 

@@ -1,7 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { Stack, router } from "expo-router";
-import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { PitFormProvider } from './pit-detail-form';
 

@@ -3,10 +3,10 @@ import { Picker } from '@react-native-picker/picker';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
-import { EVENT_KEY } from '../../EVENT_KEY';
+import { useForm } from '../../../components/match-form';
 import { FeedbackDatabase } from '../../feedbacksupabasetypes';
+import { EVENT_KEY } from '../../misc/EVENT_KEY';
 import { supabaseStatisticFeedback } from '../../supabase';
-import { useForm } from '../../util/match-form';
 
 const GeneralScreen = () => {
 

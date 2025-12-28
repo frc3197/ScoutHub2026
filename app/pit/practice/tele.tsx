@@ -5,9 +5,9 @@ import React from 'react';
 import { Animated, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 // @ts-ignore
 import ReefImage from '../../../assets/images/reef.png';
-import Checkbox from '../../util/checkbox';
-import Counter from '../../util/counter';
-import { useForm } from '../../util/match-form';
+import Checkbox from '../../../components/checkbox';
+import Counter from '../../../components/counter';
+import { useForm } from '../../../components/match-form';
 
 const TeleScreen = () => {
 

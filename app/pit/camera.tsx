@@ -2,7 +2,7 @@ import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { EVENT_KEY } from '../EVENT_KEY';
+import { EVENT_KEY } from '../misc/EVENT_KEY';
 import { supabase } from '../supabase';
 
 const router = useRouter();

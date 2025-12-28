@@ -1,9 +1,10 @@
+import Loading from '@/components/Loading';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Linking, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { EVENT_KEY } from '../EVENT_KEY';
+import PitTeam from '../../components/pit-team';
+import { EVENT_KEY } from '../misc/EVENT_KEY';
 import { supabase } from '../supabase';
-import PitTeam from '../util/pit-team';
 
 const HomeScreen = () => {
 
@@ -54,19 +55,22 @@ const HomeScreen = () => {
           }
         </View>
 
-        <Text style={styles.normalText}>Below is the team list with options to pre-scout, pit-scout, or take an image. The color of the button indicates status: grey if the team is already scouted or red if it requires scouting. Scouting a team multiple times may overrite data so make sure to coordinate who scouts which teams. </Text>
-
-        <View style={styles.scrollViewContainer}>
-          {teams.map(team => (
-            <PitTeam
-              key={team}
-              number={parseInt(team)}
-              pre={true}
-              pit={pitScoutedTeams.includes(parseInt(team))}
-              image={teamsWithImages.includes(parseInt(team))}
-            />
-          ))}
-        </View>
+        {
+          teams.length < 1 ?
+            <Loading loaded={false} />
+            :
+            (
+              <><Text style={styles.normalText}>Below is the team list with options to pre-scout, pit-scout, or take an image. The color of the button indicates status: grey if the team is already scouted or red if it requires scouting. Scouting a team multiple times may overrite data so make sure to coordinate who scouts which teams. </Text><View style={styles.scrollViewContainer}>
+                {teams.map(team => (
+                  <PitTeam
+                    key={team}
+                    number={(team)}
+                    pre={true}
+                    pit={pitScoutedTeams.includes((team))}
+                    image={teamsWithImages.includes((team))} />
+                ))}
+              </View></>)
+        }
       </ScrollView>
 
     </View >
@@ -80,7 +84,7 @@ function usePitScoutedTeams() {
   React.useEffect(() => {
     async function fetchPitScoutedTeams() {
       try {
-        const {data, error} = await supabase.from('Pit Scouting').select('*');
+        const { data, error } = await supabase.from('Pit Scouting').select('*');
         const scouted = data?.map((p) => p.team_number) ?? [];
         console.log(scouted)
 
@@ -106,9 +110,9 @@ function useTeamsWithImages() {
           .from('robot-images')
           .list(EVENT_KEY);
 
-          const results = data.map((t) => parseInt(t.name.replace('team', '')));
+        const results = data?.map((t) => parseInt(t.name.replace('team', ''))) ?? [];
 
-          setTeams(results);
+        setTeams(results);
       } catch (error) {
         console.error('Error fetching images of teams:', error);
       }
@@ -121,7 +125,7 @@ function useTeamsWithImages() {
 }
 
 function useTeamList(eventKey = EVENT_KEY) {
-  const [teams, setTeams] = React.useState([]);
+  const [teams, setTeams] = React.useState<number[]>([]);
 
   React.useEffect(() => {
     const fetchTeams = async () => {
@@ -135,7 +139,7 @@ function useTeamList(eventKey = EVENT_KEY) {
           }
         );
 
-        const teamKeys = await response.json(); // ["frc254", "frc1678", ...]
+        const teamKeys:string[] = await response.json(); // ["frc254", "frc1678", ...]
         const numbersOnly = teamKeys
           .map(key => parseInt(key.replace("frc", ""), 10))
           .filter(n => !isNaN(n))
@@ -178,10 +182,13 @@ const styles = StyleSheet.create({
   },
   matchButton: {
     backgroundColor: '#007bff',
+    borderColor: '#3b9affff',
+    borderWidth: 2,
     paddingVertical: 12,
     paddingHorizontal: 25,
     borderRadius: 8,
     alignItems: 'center',
+    justifyContent: 'center',
     width: '50%',
     height: 50,
     marginTop: 15,
@@ -192,10 +199,13 @@ const styles = StyleSheet.create({
   },
   manualButton: {
     backgroundColor: '#099237e8',
+    borderColor: '#76ca4cff',
+    borderWidth: 2,
     paddingVertical: 12,
     paddingHorizontal: 25,
     borderRadius: 8,
     alignItems: 'center',
+    justifyContent: 'center',
     width: '50%',
     marginTop: 15,
     shadowColor: '#000',
@@ -206,7 +216,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'Poppins-Medium',
     textAlign: 'center',
   },
   titleText: {
@@ -214,12 +224,14 @@ const styles = StyleSheet.create({
     padding: 25,
     textAlign: 'center',
     width: '100%',
+    fontFamily: 'Lexend-Light',
   },
   normalText: {
     fontSize: 22,
     padding: 15,
     textAlign: 'center',
     width: '100%',
+    fontFamily: 'Poppins-Light',
   },
   scrollViewContainer: {
     paddingBottom: 50,

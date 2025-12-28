@@ -5,10 +5,10 @@ import ReefImage from '@/assets/images/reef.png';
 import { Picker } from '@react-native-picker/picker';
 import React from 'react';
 import { Animated, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Checkbox from '../../../components/checkbox';
+import Counter from '../../../components/counter';
+import { useForm } from '../../../components/match-form';
 import { Database } from '../../supabasetypes';
-import Checkbox from '../../util/checkbox';
-import Counter from '../../util/counter';
-import { useForm } from '../../util/match-form';
 
 const AutoScreen = () => {
 

@@ -2,36 +2,44 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useForm } from './match-form';
 
-export default function Counter({ field, label, type = 'make' }) {
+interface CounterProps {
+    value: number;
+    min?: number;
+    max?: number;
+    callback: (n:number) => void;
+    type: 'good' | 'bad' | 'neutral';
+}
+
+export default function Counter({ value, min, max, callback, type }:CounterProps) {
     const { state, dispatch } = useForm();
-    const value = state[field] ?? 0;
 
     const increment = () => {
-        dispatch({ type: 'UPDATE_FIELD', field, value: value + 1 });
-    };
-
-    const decrement = () => {
-        if (value > 0) {
-            dispatch({ type: 'UPDATE_FIELD', field, value: value - 1 });
+        if (!max || value < max) {
+            callback(value + 1);
         }
     };
 
-    const types = ['coral-make', 'coral-miss', 'algae-make', 'algae-miss'];
+    const decrement = () => {
+        if (!min || value > min) {
+            callback(value - 1);
+        }
+    };
+
     const containerStyles = [styles.coralMakeContainer, styles.coralMissContainer, styles.algaeMakeContainer, styles.algaeMissContainer];
     const labelStyles = [styles.coralMakeContainerLabel, styles.coralMakeContainerLabel, styles.algaeOperationLabel, styles.algaeOperationLabel];
 
     return (
         <View style={containerStyles[types.indexOf(type)]}>
-            <View style={styles.horizontalContainer}>
-                <Text style={labelStyles[types.indexOf(type)]}>{label}</Text>
-                <Text style={styles.coralMakeContainerCount}>{value}</Text>
-            </View>
-            <View style={styles.horizontalContainer}>
-                <TouchableOpacity onPress={increment}>
-                    <Ionicons name={'add-circle-outline'} size={54} color={'darkgreen'} />
-                </TouchableOpacity>
+            <View style={[styles.horizontalContainer, {justifyContent: 'space-around', flex: 1,}]}>
                 <TouchableOpacity onPress={decrement}>
                     <Ionicons name={'remove-circle-outline'} size={54} color={'darkred'} />
+                </TouchableOpacity>
+                <View style={styles.horizontalContainer}>
+                    <Text style={labelStyles[types.indexOf(type)]}>{label}</Text>
+                    <Text style={styles.coralMakeContainerCount}>{value}</Text>
+                </View>
+                <TouchableOpacity onPress={increment}>
+                    <Ionicons name={'add-circle-outline'} size={54} color={'darkgreen'} />
                 </TouchableOpacity>
             </View>
         </View>

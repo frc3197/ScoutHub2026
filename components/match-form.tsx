@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useContext, useReducer } from "react";
-import { Database } from "../supabasetypes";
+import { Database } from "../app/supabasetypes";
 
 // Define the shape of your form state
 export interface FormState {

@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
-import { FormProvider } from '../util/match-form';
+import { FormProvider } from '../../components/match-form';
 
 const MatchLayout = () => {
   return (
