@@ -40,7 +40,7 @@ const HomeScreen = () => {
         <View style={styles.smallButtonContainer}>
 
           <TouchableOpacity style={styles.smallAnalysisButton}
-            onPress={() => handlePress('https://nimblevalley.github.io/ScoutingOffseason2025/')}
+            onPress={() => handlePress('https://nimblevalley.github.io/Scouting2026/')}
           >
             <Ionicons name={'analytics-outline'} size={40} color={'white'} />
           </TouchableOpacity>

@@ -1,8 +1,6 @@
 import { useRouter } from 'expo-router';
-import { collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
 import React from 'react';
 import { Linking, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { database } from '../firebase';
 
 const AdminScreen = () => {
 
@@ -11,7 +9,7 @@ const AdminScreen = () => {
   const [isLocked, setIsLocked] = React.useState(true);
   const [passwordText, setPasswordText] = React.useState('');
 
-  const checkPassword = (password) => {
+  const checkPassword = (password:string) => {
     setIsLocked(password != 'Tylenol');
 
     if (password != 'Tylenol') {
@@ -20,88 +18,16 @@ const AdminScreen = () => {
   }
 
   const downloadMatchData = async () => {
-    try {
-      const querySnapshot = await getDocs(collection(database, 'scoutingForms'));
-
-      const data = {};
-      querySnapshot.forEach((doc) => {
-        data[doc.id] = doc.data();
-      });
-
-      const jsonString = JSON.stringify(data, null, 2);
-
-      // Trigger download in browser (web only)
-      const blob = new Blob([jsonString], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'matches.json';
-      a.click();
-      URL.revokeObjectURL(url);
-
-      alert('Download started.');
-    } catch (error) {
-      console.error('Error downloading data:', error);
-      alert('Failed to download match data.');
-    }
+    
   }
 
   const resetMatchForms = async () => {
-    if (confirm('Are you sure you wish to reset all current match forms?')) {
-      try {
-        const querySnapshot = await getDocs(collection(database, 'scoutingForms'));
-
-        const deletePromises = querySnapshot.docs.map(docSnap =>
-          deleteDoc(doc(database, 'scoutingForms', docSnap.id))
-        );
-
-        await Promise.all(deletePromises);
-        console.log('All documents in scoutingForms deleted.');
-        alert('Database wiped.');
-      } catch (error) {
-        console.error('Error wiping database:', error);
-        alert('Error wiping database.');
-      }
-    }
   }
 
   const resetPitScoutForms = async () => {
-    if (confirm('Are you sure you wish to reset all pit scout detail forms?')) {
-      try {
-        const querySnapshot = await getDocs(collection(database, 'pitScout'));
-
-        const deletePromises = querySnapshot.docs.map(docSnap =>
-          deleteDoc(doc(database, 'pitScout', docSnap.id))
-        );
-
-        await Promise.all(deletePromises);
-        console.log('All documents in pitScout deleted.');
-        alert('Database wiped.');
-      } catch (error) {
-        console.error('Error wiping database:', error);
-        alert('Error wiping database.');
-      }
-    }
   }
 
   const resetRobotImages = async () => {
-    if (confirm('Are you sure you wish to reset all robot images? This will not delete the actual images but instead the references and links in the database. You must also delete the images for this to have an effect on the analysis website.')) {
-      try {
-        const querySnapshot = await getDocs(collection(database, 'robotImages'));
-
-        const deletePromises = querySnapshot.docs.map(docSnap =>
-          deleteDoc(doc(database, 'robotImages', docSnap.id))
-        );
-
-        await Promise.all(deletePromises);
-        console.log('All documents in robotImages deleted.');
-        alert('Database wiped.');
-      } catch (error) {
-        console.error('Error wiping database:', error);
-        alert('Error wiping database.');
-      }
-    }
   }
 
   const transferMatchForms = () => {
@@ -243,7 +169,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const openLink = async (url) => {
+const openLink = async (url:string) => {
   const supported = await Linking.canOpenURL(url);
 
   if (supported) {

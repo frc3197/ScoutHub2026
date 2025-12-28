@@ -1,10 +1,8 @@
-import { CameraView, useCameraPermissions } from 'expo-camera';
+import { CameraType, CameraView, useCameraPermissions } from 'expo-camera';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { doc, setDoc } from 'firebase/firestore';
 import { useRef, useState } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { EVENT_KEY } from '../EVENT_KEY';
-import { database } from '../firebase';
 import { supabase } from '../supabase';
 
 const router = useRouter();
@@ -13,11 +11,11 @@ const ImageUploadScreen = () => {
 
   const { team } = useLocalSearchParams();
 
-  const [facing, setFacing] = useState('back');
+  const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [isPreview, setIsPreview] = useState(false);
 
-  const cameraRef = useRef<CameraView>();
+  const cameraRef = useRef<CameraView>(null);
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -39,6 +37,9 @@ const ImageUploadScreen = () => {
   }
 
   const cancelPreview = async () => {
+    if (!cameraRef.current)
+      return;
+
     await cameraRef.current.resumePreview();
     setIsPreview(false);
   };
@@ -56,47 +57,10 @@ const ImageUploadScreen = () => {
     }
   };
 
-  const uploadPhotoCloudinary = async (team) => {
-    if (cameraRef.current) {
-      const options = { quality: 0.7, base64: true };
-      const data = await cameraRef.current.takePictureAsync(options);
-
-      const base64Img = `data:image/jpeg;base64,${data.base64}`;
-      const apiUrl = 'https://api.cloudinary.com/v1_1/dgbqbosp2/image/upload';
-
-      const bodyData = {
-        file: data.base64,
-        upload_preset: 'Mukwonago',
-        public_id: team
-      };
-
-      try {
-        const res = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(bodyData)
-        });
-
-        const result = await res.json();
-        console.log(result);
-
-        submitFirebase(team, result.secure_url);
-
-        if (result.secure_url) {
-          alert('Upload successful');
-        } else {
-          alert(`Upload failed: ${result.error?.message || 'Unknown error'}`);
-        }
-      } catch (err) {
-        console.error('Upload error:', err);
-        alert('Network or Cloudinary error');
-      }
-    }
-  };
-
   async function uploadPhoto(team: number) {
+    if (!cameraRef.current)
+      return;
+
     try {
       const options = { quality: 0.7, base64: true };
       const imageData = await cameraRef.current.takePictureAsync(options);
@@ -104,7 +68,10 @@ const ImageUploadScreen = () => {
       const filePath = `${EVENT_KEY}/team${team}`;
 
       // Clean base64 string (sometimes includes "data:image/jpeg;base64,")
-      const base64Img = imageData.base64.replace(/^data:image\/\w+;base64,/, '');
+      const base64Img = imageData.base64?.replace(/^data:image\/\w+;base64,/, '');
+
+      if (!base64Img)
+        return;
 
       // Convert base64 → binary Uint8Array
       const byteCharacters = atob(base64Img);
@@ -164,26 +131,6 @@ const ImageUploadScreen = () => {
       </CameraView>
     </View>
   );
-}
-
-async function submitFirebase(team, url) {
-  console.log('Submitting form...');
-
-  try {
-    // Submit to Firestore
-    await setDoc(doc(database, 'robotImages', `image_team${team}`), {
-      teamNumber: team,
-      url: url,
-    });
-
-    alert('Data references submitted successfully!');
-
-    router.replace('./');
-
-  } catch (error) {
-    console.error('Error submitting data: ', error);
-    alert(error);
-  }
 }
 
 const styles = StyleSheet.create({

@@ -5,7 +5,6 @@
 expo-env.d.ts
 # @end expo-cli
 
-/app/firebase.js
-/app/supabase.js
+/app/supabase.ts
 
 /node_modules
