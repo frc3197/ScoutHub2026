@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
     teamText: {
         fontSize: 35,
         textAlign: 'center',
-        fontFamily: 'Lexend-Medium',
+        fontFamily: 'Lexend-Regular',
     },
     statusText: {
         fontSize: 25,
