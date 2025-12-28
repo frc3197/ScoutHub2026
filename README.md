@@ -1,4 +1,10 @@
-# Welcome to your Expo app 👋
+#Scout Hub, FRC 3197's client side scouting suite
+
+This project enables team members to scout qualification matches, practice matches, pre-scouting matches, and robots in the pit. Built in React Native with Expo, the site can be deployed to any platform but has been tested only in the web. Uses Supabase for database storage, migrating to Typescript for 2026.
+
+#EXPO GENERATED DOCUMENTATION:
+
+## Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
