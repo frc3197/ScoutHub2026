@@ -140,6 +140,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: 'red',
         marginTop: 35,
+        fontFamily: 'Lexend-Light',
     },
 });
 

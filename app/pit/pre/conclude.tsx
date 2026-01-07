@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FormAction, FormState, useForm } from '../../../components/match-form';
 
 import { Database } from '@/app/supabasetypes';
-import Checkbox from '../../../components/checkbox';
+import Checkbox from '../../../components/form/checkbox';
 import { LiveDataInsert, supabase } from '../../supabase';
 
 // inside your component

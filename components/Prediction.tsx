@@ -60,8 +60,8 @@ const styles = StyleSheet.create({
         width: '90%',
         textAlign: 'center',
         color: 'teal',
-        fontWeight: 'bold',
         marginTop: 35,
+        fontFamily: 'Poppins-SemiBold',
     },
     wagerContainer: {
         display: 'flex',
@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
         width: '33%',
         textAlign: 'right',
         fontWeight: 'bold',
+        fontFamily: 'Lexend-Light',
     },
     input: {
         height: 40,
@@ -98,5 +99,6 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         backgroundColor: '#FFF6EA',
         color: 'black',
+        fontFamily: 'Poppins-SemiBold',
     },
 });

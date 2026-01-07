@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         width: '33%',
         textAlign: 'right',
-        fontWeight: 'bold',
+        fontFamily: 'Lexend-Regular',
     },
     input: {
         height: 40,
@@ -56,5 +56,6 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         backgroundColor: '#FFF6EA',
         color: 'black',
+        fontFamily: 'Poppins-SemiBold',
     },
 });

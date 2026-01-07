@@ -5,7 +5,7 @@ import { FormProvider } from '../../components/match-form';
 const MatchLayout = () => {
   return (
     <FormProvider>
-      <Tabs screenOptions={{ tabBarActiveTintColor: 'orange' }}>
+      <Tabs screenOptions={{ tabBarActiveTintColor: 'orange', tabBarLabelStyle: {fontFamily: 'Branding', fontSize: 8,}  }}>
         <Tabs.Screen
           name="index"
           options={{

@@ -1,4 +1,3 @@
-import { Picker } from '@react-native-picker/picker';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -8,10 +7,11 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FormAction, FormState, useForm } from '../../components/match-form';
 
-import Checkbox from '../../components/checkbox';
+import Checkbox from '../../components/form/checkbox';
 import { FeedbackDataInsert, LiveDataInsert, supabase, supabaseStatisticFeedback } from '../supabase';
 
 // inside your component
+import SelectWithLabel from '@/components/form/SelectWithLabel';
 import { EVENT_KEY } from '../misc/EVENT_KEY';
 import { Database } from '../supabasetypes';
 const router = useRouter();
@@ -30,25 +30,11 @@ const ConcludeScreen = () => {
         <ScrollView style={styles.scrollView}>
             <View style={styles.pageContainer}>
 
-                <Checkbox field="lostComms" label="Lost comms?"></Checkbox>
+                <Checkbox value={state.lostComms} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'lostComms', value }) }} label="Lost Comms?"></Checkbox>
 
-                <Checkbox field="disabled" label="Disabled/broke down?"></Checkbox>
+                <Checkbox value={state.disabled} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'disabled', value }) }} label="Disabled/Broke Down?"></Checkbox>
 
-                <View style={[styles.horizontalContainer, { width: '90%', marginTop: 15, }]}>
-                    <Text style={styles.label}>Driver rating:</Text>
-                    <Picker
-                        style={styles.input}
-                        selectedValue={state.driverSkill}
-                        onValueChange={(value) =>
-                            dispatch({ type: 'UPDATE_FIELD', field: 'driverSkill', value })
-                        }>
-                        <Picker.Item label='Excellent' value='5' />
-                        <Picker.Item label='Good' value='4' />
-                        <Picker.Item label='Alright' value='3' />
-                        <Picker.Item label='Clunky' value='2' />
-                        <Picker.Item label='Awful' value='1' />
-                    </Picker>
-                </View>
+                <SelectWithLabel label='Driver Skill:' itemLabelFormatter={(v:string) => {switch(v) {case '5': return 'Excellent'; case '4': return 'Good'; case '3': return 'Alright'; case '2': return 'Clunky'; case '1': return 'Awful'; default: return 'n/a';}}} selectedValue={String(state.driverSkill)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'driverSkill', value }) }} />
 
                 <View style={styles.verticalContainer}>
                     <Text style={styles.commentLabel}>Final Comments:</Text>
@@ -191,8 +177,8 @@ const ConcludeScreen = () => {
 
             if (error) {
                 alert('ERROR: ' + error.message + (error.code == '23502' ? '. \n\nThis error is likely due to an empty input field, make sure the form is fully filled out.' : '.\n\nThis error cause is unknown, connection is always a culprit. Report this issue to scout lead.'));
-            setIsDisabled(false);
-        } else {
+                setIsDisabled(false);
+            } else {
                 setIsDisabled(false);
                 alert('Data submitted successfully! A new form will begin now.');
 
@@ -291,9 +277,10 @@ const submitWager = async (state: FormState) => {
 const styles = StyleSheet.create({
     pageContainer: {
         flex: 1,
-        paddingTop: 5,
+        paddingTop: 15,
         alignItems: 'center',
         backgroundColor: '#FFF6EA',
+        gap: 20,
     },
     scrollView: {
         width: '100%',
@@ -353,11 +340,11 @@ const styles = StyleSheet.create({
         zIndex: 5,
         backgroundColor: '#FFF6EA',
         padding: 5,
-        borderWidth: 1,
-        //width: '50%',
+        borderWidth: 2,
         borderRadius: 3,
-        borderColor: 'black',
+        borderColor: '#0000005d',
         marginLeft: 20,
+        fontFamily: 'Lexend-Regular',
     },
     commentInput: {
         height: 200,
@@ -373,6 +360,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF6EA',
         color: 'black',
         marginBottom: 20,
+        fontFamily: 'Poppins-Light',
     },
     submitButton: {
         backgroundColor: '#ff8c00',
@@ -380,14 +368,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 25,
         borderRadius: 8,
         alignItems: 'center',
-        width: '50%',
+        width: 240,
         marginTop: 35,
         marginBottom: 50,
     },
     buttonText: {
         color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
+        fontSize: 24,
+        fontFamily: 'Poppins-Medium',
     },
 });
 
