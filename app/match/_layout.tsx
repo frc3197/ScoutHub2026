@@ -37,6 +37,16 @@ const MatchLayout = () => {
           }}
         />
         <Tabs.Screen
+          name="endgame"
+          options={{
+            title: 'Endgame',
+            headerShown: false,
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'prism' : 'prism-outline'} size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
           name="conclude"
           options={{
             title: 'Conclude',

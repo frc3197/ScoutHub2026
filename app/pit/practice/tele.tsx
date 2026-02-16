@@ -6,7 +6,7 @@ import { Animated, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View }
 // @ts-ignore
 import ReefImage from '../../../assets/images/reef.png';
 import Checkbox from '../../../components/form/checkbox';
-import Counter from '../../../components/form/counter';
+import Counter from '../../../components/form/StackedCounter';
 import { useForm } from '../../../components/match-form';
 
 const TeleScreen = () => {

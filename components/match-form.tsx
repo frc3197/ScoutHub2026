@@ -11,27 +11,30 @@ export interface FormState {
   selectedStation: Database['public']['Enums']['driverstation'];
 
   selectedStartPosition: Database['public']['Enums']['autostartpositionsreefscape'];
-  autoL4Count: number;
-  autoL3Count: number;
-  autoL2Count: number;
-  autoL1Count: number;
-  autoMissCoralCount: number;
-  autoNetCount: number;
-  autoMissNetCount: number;
-  autoProcessorCount: number;
-  leave: boolean;
+  autoClimb: boolean;
+  autoClimbLocation: string;
+  autoStrengthOfShooting: number;
+  autoIssues: string;
+  fuelTakenFromNeutralZone: number;
+  autoPathDetails: string;
 
-  teleL4Count: number;
-  teleL3Count: number;
-  teleL2Count: number;
-  teleL1Count: number;
-  teleMissCoralCount: number;
-  teleNetCount: number;
-  teleMissNetCount: number;
-  teleProcessorCount: number;
-  park: boolean;
-  selectedClimb: string;
+  teleShotsMade: number;
+  teleFuelPassed: number;
+  teleFuelPushed: number;
+  telePassLocations: string;
 
+  defenseStrength: number;
+  foulsIncurred: number;
+  playedDefense: boolean;
+  defendBumpTrench: boolean;
+  defendNeutral: boolean;
+  defendAllianceZone: boolean;
+
+  climbType: string;
+  teleClimbLocation: string;
+  teleClimbTime: string;
+
+  incurredPenalties: boolean;
   lostComms: boolean;
   disabled: boolean;
   driverSkill: number;
@@ -48,27 +51,29 @@ export const initialState: FormState = {
   selectedStation: "B1",
 
   selectedStartPosition: 'Far',
-  autoL4Count: 0,
-  autoL3Count: 0,
-  autoL2Count: 0,
-  autoL1Count: 0,
-  autoMissCoralCount: 0,
-  autoNetCount: 0,
-  autoMissNetCount: 0,
-  autoProcessorCount: 0,
-  leave: true,
+  autoClimb: false,
+  autoClimbLocation: '',
+  autoStrengthOfShooting: 3,
+  autoIssues: '',
+  fuelTakenFromNeutralZone: 0,
+  autoPathDetails: '{}',
 
-  teleL4Count: 0,
-  teleL3Count: 0,
-  teleL2Count: 0,
-  teleL1Count: 0,
-  teleMissCoralCount: 0,
-  teleNetCount: 0,
-  teleMissNetCount: 0,
-  teleProcessorCount: 0,
-  park: false,
-  selectedClimb: "No",
+  teleShotsMade: 0,
+  teleFuelPassed: 0,
+  teleFuelPushed: 0,
+  telePassLocations: '',
+  defenseStrength: 0,
+  foulsIncurred: 0,
+  playedDefense: false,
+  defendBumpTrench: false,
+  defendNeutral: false,
+  defendAllianceZone: false,
 
+  climbType: 'No attempt',
+  teleClimbLocation: '',
+  teleClimbTime: '',
+
+  incurredPenalties: false,
   lostComms: false,
   disabled: false,
   driverSkill: 3,

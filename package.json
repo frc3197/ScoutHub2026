@@ -50,7 +50,8 @@
     "react-native-url-polyfill": "^2.0.0",
     "react-native-web": "^0.20.0",
     "react-native-webview": "13.13.5",
-    "supabase": "^2.40.7"
+    "supabase": "^2.40.7",
+    "expo-audio": "~0.4.9"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

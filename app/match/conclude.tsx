@@ -45,7 +45,7 @@ const ConcludeScreen = () => {
                         }
                         value={state.commentText}
                         placeholderTextColor='grey'
-                        placeholder='Please write a useful comment for alliance considerations, not just `slow at L2 good climb.`'
+                        placeholder='Think about how this team could contribute with us toward winning a match...'
                         multiline={true}
                         numberOfLines={4}
                     />
@@ -292,17 +292,6 @@ const styles = StyleSheet.create({
         gap: 10,
         alignItems: 'center',
     },
-    checkbox: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 25,
-        backgroundColor: '#e6d4c3',
-        padding: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-        gap: 10,
-    },
     checkboxText: {
         fontSize: 24
     },
@@ -340,9 +329,10 @@ const styles = StyleSheet.create({
         zIndex: 5,
         backgroundColor: '#FFF6EA',
         padding: 5,
+        paddingHorizontal: 10,
         borderWidth: 2,
-        borderRadius: 3,
-        borderColor: '#0000005d',
+        borderRadius: 5,
+        borderColor: '#0000007e',
         marginLeft: 20,
         fontFamily: 'Lexend-Regular',
     },
@@ -350,13 +340,13 @@ const styles = StyleSheet.create({
         height: 200,
         margin: 12,
         marginTop: 20,
-        borderWidth: 1,
+        borderWidth: 2,
         padding: 10,
         paddingTop: 25,
         fontSize: 20,
         width: '93.5%',
-        borderRadius: 3,
-        borderColor: 'black',
+        borderRadius: 10,
+        borderColor: '#0000007e',
         backgroundColor: '#FFF6EA',
         color: 'black',
         marginBottom: 20,

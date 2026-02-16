@@ -2,7 +2,7 @@ import SelectWithLabel from '@/components/form/SelectWithLabel';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import Checkbox from '../../components/form/checkbox';
-import Counter from '../../components/form/counter';
+import StackedCounter from '../../components/form/StackedCounter';
 import { useForm } from '../../components/match-form';
 
 const AutoScreen = () => {
@@ -14,13 +14,15 @@ const AutoScreen = () => {
             <View style={styles.pageContainer}>
                 <Text style={styles.title}>AUTONOMOUS MODE</Text>
 
-                <SelectWithLabel label='Starting position:' selectedValue={state.selectedStartPosition} items={['Near', 'Far']} callback={(value) => {dispatch({ type: 'UPDATE_FIELD', field: 'selectedStartPosition', value })}} />
+                <SelectWithLabel label='Starting position:' selectedValue={state.selectedStartPosition} items={['Near', 'Far']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'selectedStartPosition', value }) }} />
 
 
-                <Counter value={state.autoL4Count} min={0} type='neutral' label="L4:" callback={(value) => {dispatch({ type: 'UPDATE_FIELD', field: 'autoL4Count', value })}}></Counter>
+                <StackedCounter value={state.fuelTakenFromNeutralZone} min={0} type='small' label="Fuel taken from NZ:" callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'fuelTakenFromNeutralZone', value }) }}></StackedCounter>
 
 
-                <Checkbox value={state.leave} callback={(value) => {dispatch({ type: 'UPDATE_FIELD', field: 'leave', value })}} label="Ended off start line:"></Checkbox>
+                <Checkbox value={state.autoClimb} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'autoClimb', value }) }} label="L1 Climb:"></Checkbox>
+
+                <SelectWithLabel label='Auto SOS:' itemLabelFormatter={(v: string) => { switch (v) { case '5': return 'Excellent'; case '4': return 'Good'; case '3': return 'Medium'; case '2': return 'Poor'; case '1': return 'Awful/None'; default: return 'n/a'; } }} selectedValue={String(state.autoStrengthOfShooting)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'autoStrengthOfShooting', value }) }} />
 
             </View>
         </ScrollView>

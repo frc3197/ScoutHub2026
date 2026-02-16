@@ -6,7 +6,7 @@ import { Picker } from '@react-native-picker/picker';
 import React from 'react';
 import { Animated, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Checkbox from '../../../components/form/checkbox';
-import Counter from '../../../components/form/counter';
+import Counter from '../../../components/form/StackedCounter';
 import { useForm } from '../../../components/match-form';
 import { Database } from '../../supabasetypes';
 

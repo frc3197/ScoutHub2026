@@ -1,7 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-type types = 'good' | 'bad' | 'neutral';
+type types = 'good' | 'bad' | 'neutral' | 'small';
 
 interface CounterProps {
     value: number;
@@ -16,6 +16,7 @@ export default function Counter({ value, min, max, callback, type, label }: Coun
 
     const containerStyles: Record<types, any> = {
         'neutral': styles.neutralContainer,
+        'small': styles.neutralContainer,
         'good': styles.goodContainer,
         'bad': styles.badContainer,
     };
@@ -24,6 +25,7 @@ export default function Counter({ value, min, max, callback, type, label }: Coun
         'neutral': styles.neutralContainerLabel,
         'good': styles.goodContainerLabel,
         'bad': styles.badContainerLabel,
+        'small': styles.smallContainerLabel,
     };
 
     return (
@@ -62,7 +64,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'space-between',
         borderWidth: 3,
-        borderColor: '#0000001e'
+        borderColor: '#0000001e',
+        minWidth: 320,
     },
     neutralContainer: {
         backgroundColor: '#e6d4c3',
@@ -82,6 +85,10 @@ const styles = StyleSheet.create({
     neutralContainerLabel: {
         fontSize: 32,
     },
+    smallContainerLabel: {
+        fontSize: 16,
+        maxWidth: 90,
+    },
     countContainer: {
         fontSize: 44,
         fontFamily: 'Poppins-SemiBold',
@@ -96,6 +103,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         gap: 8,
+        justifyContent: 'center',
         alignItems: 'center',
     },
 });

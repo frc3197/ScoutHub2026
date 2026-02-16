@@ -1,26 +1,83 @@
 import SelectWithLabel from '@/components/form/SelectWithLabel';
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useAudioPlayer } from 'expo-audio';
+import { Image } from 'expo-image';
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Checkbox from '../../components/form/checkbox';
-import Counter from '../../components/form/counter';
+import StackedCounter from '../../components/form/StackedCounter';
 import { useForm } from '../../components/match-form';
+
+const bzzBzzBzz = require('@/assets/sounds/bzzbzzbzz.wav');
+const woah = require('@/assets/sounds/woowooaa.wav');
 
 const TeleScreen = () => {
 
     const { state, dispatch } = useForm();
+
+    const bzzPlayer = useAudioPlayer(bzzBzzBzz);
+    const woahPlayer = useAudioPlayer(woah);
+
+    const [funColorSwitch, setFunColorSwitch] = useState(0);
 
     return (
         <ScrollView style={styles.scrollView}>
             <View style={styles.pageContainer}>
                 <Text style={styles.title}>TELEOP MODE</Text>
 
-                <SelectWithLabel label='Starting position:' selectedValue={state.selectedStartPosition} items={['Near', 'Far']} callback={(value) => {dispatch({ type: 'UPDATE_FIELD', field: 'selectedStartPosition', value })}} />
+                <View style={styles.verticalContainer}>
+                    <StackedCounter value={state.teleShotsMade} min={0} type='neutral' label="Shots made:" callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'teleShotsMade', value }) }}></StackedCounter>
+                    <TouchableOpacity onPress={() => {
+                        setFunColorSwitch(funColorSwitch == 1 ? 0 : 1);
+                    }} style={[styles.horizontalContainer, { filter: `invert(${funColorSwitch})` }]}>
+                        <Image style={styles.fuelImage} source={require('@/assets/images/fuel.png')} />
+                        <Image style={styles.fuelImage} source={require('@/assets/images/fuel.png')} />
+                        <Image style={styles.fuelImage} source={require('@/assets/images/fuel.png')} />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.verticalContainer}>
+                    <StackedCounter value={state.teleFuelPassed} min={0} type='neutral' label="Fuel passed:" callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'teleFuelPassed', value }) }}></StackedCounter>
+                    <TouchableOpacity onPress={() => {
+                        bzzPlayer.seekTo(0);
+                        bzzPlayer.play();
+                    }} style={[styles.horizontalContainer, { filter: `invert(${funColorSwitch})` }]}>
+                        <Image style={styles.fuelImage} source={require('@/assets/images/magic-pass.png')} />
+                        <Image style={styles.fuelImage} source={require('@/assets/images/pass-bg.png')} />
+                        <Image style={styles.fuelImage} source={require('@/assets/images/magic-pass.png')} />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.verticalContainer}>
+                    <StackedCounter value={state.teleFuelPushed} min={0} type='neutral' label="Fuel pushed:" callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'teleFuelPushed', value }) }}></StackedCounter>
+                    <TouchableOpacity onPress={() => {
+                        woahPlayer.seekTo(0);
+                        woahPlayer.play();
+                    }} style={[styles.horizontalContainer, { filter: `invert(${funColorSwitch})` }]}>
+                        <Image style={styles.fuelImage} source={require('@/assets/images/dozer-bg.png')} />
+                        <Image style={styles.fuelImage} source={require('@/assets/images/dozer-bg.png')} />
+                        <Image style={styles.fuelImage} source={require('@/assets/images/dozer-bg.png')} />
+                    </TouchableOpacity>
+                </View>
 
 
-                <Counter value={state.autoL4Count} min={0} type='neutral' label="L4:" callback={(value) => {dispatch({ type: 'UPDATE_FIELD', field: 'autoL4Count', value })}}></Counter>
+                <Checkbox value={state.playedDefense} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'playedDefense', value }) }} label="Played defense?"></Checkbox>
 
+                {state.playedDefense &&
+                    <View style={[styles.verticalContainer, {borderWidth: 2, borderRadius: 20, borderColor: '#0000007e'}]}>
 
-                <Checkbox value={state.leave} callback={(value) => {dispatch({ type: 'UPDATE_FIELD', field: 'leave', value })}} label="Ended off start line:"></Checkbox>
+                        <SelectWithLabel label='Defense quality' itemLabelFormatter={(v: string) => { switch (v) { case '5': return 'Lights-out'; case '4': return 'Good'; case '3': return 'Average'; case '2': return 'Poor'; case '1': return 'Awful'; default: return 'n/a'; } }} selectedValue={String(state.defenseStrength)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defenseStrength', value }) }} />
+
+                        <Text style={{fontSize: 18, marginHorizontal: 15, textAlign: 'center',}}>Where do they commonly defend? Select all that apply:</Text>
+                        <View style={[styles.verticalContainer, {gap: 10}]}>
+                            <Checkbox value={state.defendBumpTrench} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defendBumpTrench', value }) }} label="Trench or Bump"></Checkbox>
+                            <Checkbox value={state.defendAllianceZone} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defendAllianceZone', value }) }} label="Alliance Zone"></Checkbox>
+                            <Checkbox value={state.defendNeutral} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defendNeutral', value }) }} label="Neutral Zone"></Checkbox>
+                        </View>
+                   
+                    </View>
+                }
+
+                <Checkbox value={state.incurredPenalties} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'incurredPenalties', value }) }} label="Committed fouls?"></Checkbox>
 
             </View>
         </ScrollView>
@@ -31,9 +88,10 @@ const styles = StyleSheet.create({
     pageContainer: {
         flex: 1,
         paddingTop: 5,
-        gap: 25,
+        gap: 35,
         alignItems: 'center',
         backgroundColor: '#FFF6EA',
+        paddingBottom: 15,
     },
     label: {
         fontSize: 20,
@@ -57,6 +115,19 @@ const styles = StyleSheet.create({
         gap: 10,
         alignItems: 'center',
     },
+    fuelImage: {
+        width: 100,
+        aspectRatio: 1,
+    },
+    verticalContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 5,
+        width: '100%',
+        marginBottom: 25,
+    }
 });
 
 export default TeleScreen;
