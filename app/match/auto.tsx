@@ -20,7 +20,13 @@ const AutoScreen = () => {
                 <StackedCounter value={state.fuelTakenFromNeutralZone} min={0} type='small' label="Fuel taken from NZ:" callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'fuelTakenFromNeutralZone', value }) }}></StackedCounter>
 
 
-                <Checkbox value={state.autoClimb} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'autoClimb', value }) }} label="L1 Climb:"></Checkbox>
+                <View style={{borderWidth: state.autoClimb ? 2 : 0, borderRadius: 20, borderColor: '#0000007e', paddingVertical: 15, width: '100%'}}>
+                    <Checkbox value={state.autoClimb} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'autoClimb', value }) }} label="L1 Climb:"></Checkbox>
+
+                    {state.autoClimb &&
+                        <SelectWithLabel label='Climb location:' selectedValue={state.autoClimbLocation} items={['Near', 'Far']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'autoClimbLocation', value }) }} />
+                    }
+                </View>
 
                 <SelectWithLabel label='Auto SOS:' itemLabelFormatter={(v: string) => { switch (v) { case '5': return 'Excellent'; case '4': return 'Good'; case '3': return 'Medium'; case '2': return 'Poor'; case '1': return 'Awful/None'; default: return 'n/a'; } }} selectedValue={String(state.autoStrengthOfShooting)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'autoStrengthOfShooting', value }) }} />
 
@@ -33,6 +39,7 @@ const styles = StyleSheet.create({
     pageContainer: {
         flex: 1,
         paddingTop: 5,
+        paddingHorizontal: 5,
         gap: 25,
         alignItems: 'center',
         backgroundColor: '#FFF6EA',

@@ -60,22 +60,19 @@ const TeleScreen = () => {
                 </View>
 
 
-                <Checkbox value={state.playedDefense} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'playedDefense', value }) }} label="Played defense?"></Checkbox>
+                <View style={[styles.verticalContainer, { borderWidth: state.playedDefense ? 2 : 0, borderRadius: 20, paddingVertical: 15, borderColor: '#0000007e' }]}>
+                    <Checkbox value={state.playedDefense} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'playedDefense', value }) }} label="Played defense?"></Checkbox>
 
-                {state.playedDefense &&
-                    <View style={[styles.verticalContainer, {borderWidth: 2, borderRadius: 20, borderColor: '#0000007e'}]}>
+                    {state.playedDefense &&
 
-                        <SelectWithLabel label='Defense quality' itemLabelFormatter={(v: string) => { switch (v) { case '5': return 'Lights-out'; case '4': return 'Good'; case '3': return 'Average'; case '2': return 'Poor'; case '1': return 'Awful'; default: return 'n/a'; } }} selectedValue={String(state.defenseStrength)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defenseStrength', value }) }} />
+                        <><SelectWithLabel label='Defense quality' itemLabelFormatter={(v: string) => { switch (v) { case '5': return 'Lights-out'; case '4': return 'Good'; case '3': return 'Average'; case '2': return 'Poor'; case '1': return 'Awful'; default: return 'n/a'; } }} selectedValue={String(state.defenseStrength)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defenseStrength', value }); }} /><Text style={{ fontSize: 18, marginHorizontal: 15, textAlign: 'center', }}>Where do they commonly defend? Select all that apply:</Text><View style={[styles.verticalContainer, { gap: 10 }]}>
+                            <Checkbox value={state.defendBumpTrench} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defendBumpTrench', value }); }} label="Trench or Bump"></Checkbox>
+                            <Checkbox value={state.defendAllianceZone} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defendAllianceZone', value }); }} label="Alliance Zone"></Checkbox>
+                            <Checkbox value={state.defendNeutral} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defendNeutral', value }); }} label="Neutral Zone"></Checkbox>
+                        </View></>
 
-                        <Text style={{fontSize: 18, marginHorizontal: 15, textAlign: 'center',}}>Where do they commonly defend? Select all that apply:</Text>
-                        <View style={[styles.verticalContainer, {gap: 10}]}>
-                            <Checkbox value={state.defendBumpTrench} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defendBumpTrench', value }) }} label="Trench or Bump"></Checkbox>
-                            <Checkbox value={state.defendAllianceZone} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defendAllianceZone', value }) }} label="Alliance Zone"></Checkbox>
-                            <Checkbox value={state.defendNeutral} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defendNeutral', value }) }} label="Neutral Zone"></Checkbox>
-                        </View>
-                   
-                    </View>
-                }
+                    }
+                </View>
 
                 <Checkbox value={state.incurredPenalties} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'incurredPenalties', value }) }} label="Committed fouls?"></Checkbox>
 
@@ -91,7 +88,8 @@ const styles = StyleSheet.create({
         gap: 35,
         alignItems: 'center',
         backgroundColor: '#FFF6EA',
-        paddingBottom: 15,
+        paddingBottom: 50,
+        paddingHorizontal: 5,
     },
     label: {
         fontSize: 20,

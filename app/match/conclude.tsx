@@ -36,6 +36,25 @@ const ConcludeScreen = () => {
 
                 <SelectWithLabel label='Driver Skill:' itemLabelFormatter={(v:string) => {switch(v) {case '5': return 'Excellent'; case '4': return 'Good'; case '3': return 'Alright'; case '2': return 'Clunky'; case '1': return 'Awful'; default: return 'n/a';}}} selectedValue={String(state.driverSkill)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'driverSkill', value }) }} />
 
+                <SelectWithLabel label='Throughput Speed:' itemLabelFormatter={(v:string) => {switch(v) {case '5': return 'Instant'; case '4': return 'Fast'; case '3': return 'Alright'; case '2': return 'Slow'; case '1': return 'Awful'; default: return 'n/a';}}} selectedValue={String(state.tioiRating)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'tioiRating', value }) }} />
+
+                <SelectWithLabel label='TIOI/Intake rating:' itemLabelFormatter={(v:string) => {switch(v) {case '5': return 'Excellent'; case '4': return 'Slurping'; case '3': return 'Alright'; case '2': return 'Poor'; case '1': return 'Awful'; default: return 'n/a';}}} selectedValue={String(state.throughputSpeed)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'throughputSpeed', value }) }} />
+
+                <View style={styles.verticalContainer}>
+                    <Text style={styles.commentLabel}>Team's strategies:</Text>
+                    <TextInput
+                        style={styles.strategyInput}
+                        onChangeText={(text) =>
+                            dispatch({ type: 'UPDATE_FIELD', field: 'strategyText', value: text })
+                        }
+                        value={state.commentText}
+                        placeholderTextColor='grey'
+                        placeholder='Write about any strategies we could use or intercept... consider active vs inactive...'
+                        multiline={true}
+                        numberOfLines={4}
+                    />
+                </View>
+
                 <View style={styles.verticalContainer}>
                     <Text style={styles.commentLabel}>Final Comments:</Text>
                     <TextInput
@@ -350,6 +369,22 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF6EA',
         color: 'black',
         marginBottom: 20,
+        fontFamily: 'Poppins-Light',
+    },
+    strategyInput: {
+        height: 130,
+        margin: 12,
+        marginTop: 20,
+        borderWidth: 2,
+        padding: 10,
+        paddingTop: 25,
+        fontSize: 20,
+        width: '93.5%',
+        borderRadius: 10,
+        borderColor: '#0000007e',
+        backgroundColor: '#FFF6EA',
+        color: 'black',
+        marginBottom: 0,
         fontFamily: 'Poppins-Light',
     },
     submitButton: {

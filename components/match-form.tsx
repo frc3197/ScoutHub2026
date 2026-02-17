@@ -34,10 +34,14 @@ export interface FormState {
   teleClimbLocation: string;
   teleClimbTime: string;
 
+  tioiRating: number;
+  throughputSpeed: number;
+
   incurredPenalties: boolean;
   lostComms: boolean;
   disabled: boolean;
   driverSkill: number;
+  strategyText: string;
   commentText: string;
 }
 
@@ -73,10 +77,14 @@ export const initialState: FormState = {
   teleClimbLocation: '',
   teleClimbTime: '',
 
+  tioiRating: 3,
+  throughputSpeed: 3,
+
   incurredPenalties: false,
   lostComms: false,
   disabled: false,
   driverSkill: 3,
+  strategyText: '',
   commentText: "",
 };
 
