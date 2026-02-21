@@ -1,9 +1,10 @@
+import AutoStartPosition from '@/components/form/AutoStartPosition';
+import Checkbox from '@/components/form/checkbox';
 import SelectWithLabel from '@/components/form/SelectWithLabel';
+import StackedCounter from '@/components/form/StackedCounter';
+import { useForm } from '@/components/match-form';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import Checkbox from '../../../components/form/checkbox';
-import StackedCounter from '../../../components/form/StackedCounter';
-import { useForm } from '../../../components/match-form';
 
 const AutoScreen = () => {
 
@@ -14,6 +15,9 @@ const AutoScreen = () => {
             <View style={styles.pageContainer}>
                 <Text style={styles.title}>AUTONOMOUS MODE</Text>
 
+                <AutoStartPosition value={state.selectedStartPosition} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'selectedStartPosition', value }) }} />
+
+                { /*
                 <SelectWithLabel label='Starting position:' selectedValue={state.selectedStartPosition} items={[
                     "center-hub",
                     "outpost-bump",
@@ -21,6 +25,8 @@ const AutoScreen = () => {
                     "depot-bump",
                     "depot-trench"
                 ]} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'selectedStartPosition', value }) }} />
+                 */
+                }
 
 
                 <StackedCounter value={state.fuelTakenFromNeutralZone} min={0} type='small' label="Fuel taken from NZ:" callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'fuelTakenFromNeutralZone', value }) }}></StackedCounter>

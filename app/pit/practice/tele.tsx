@@ -1,11 +1,11 @@
+import Checkbox from '@/components/form/checkbox';
 import SelectWithLabel from '@/components/form/SelectWithLabel';
+import StackedCounter from '@/components/form/StackedCounter';
+import { useForm } from '@/components/match-form';
 import { useAudioPlayer } from 'expo-audio';
 import { Image } from 'expo-image';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Checkbox from '../../../components/form/checkbox';
-import StackedCounter from '../../../components/form/StackedCounter';
-import { useForm } from '../../../components/match-form';
 
 const bzzBzzBzz = require('@/assets/sounds/bzzbzzbzz.wav');
 const woah = require('@/assets/sounds/woowooaa.wav');
@@ -18,6 +18,13 @@ const TeleScreen = () => {
     const woahPlayer = useAudioPlayer(woah);
 
     const [funColorSwitch, setFunColorSwitch] = useState(0);
+
+    const shotLocations = [
+        "hub-close"
+        , "anywhere"
+        , "known-medium"
+        , "cannot-shoot"
+    ]
 
     return (
         <ScrollView style={styles.scrollView}>
@@ -75,6 +82,10 @@ const TeleScreen = () => {
                 </View>
 
                 <Checkbox value={state.incurredPenalties} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'incurredPenalties', value }) }} label="Committed fouls?"></Checkbox>
+
+                <SelectWithLabel label='How defendable?' itemLabelFormatter={(v: string) => { switch (v) { case '1': return 'Extremely prone to defense'; case '2': return 'Somewhat defendable'; case '3': return 'Hard to defend'; default: return 'n/a'; } }} selectedValue={String(state.howDefendable)} items={['1', '2', '3']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'howDefendable', value }); }} />
+
+                <SelectWithLabel label='Where can they shoot?'  selectedValue={String(state.shotLocations)} items={shotLocations} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'shotLocations', value }); }} />
 
             </View>
         </ScrollView>

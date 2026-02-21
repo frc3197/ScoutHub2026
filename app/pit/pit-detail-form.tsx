@@ -11,10 +11,12 @@ type PitFormState = Pick<
 const initialState: PitFormState = {
   team_number: -1,
   driver_experience: '',
-  algae_description: '',
-  auto_description: '',
-  endgame_description: '',
-  comments: '',
+  hopper_size: '',
+  bump: '',
+  trench: '',
+  climb_type: '',
+  comments,
+  
 };
 
 type Action =
