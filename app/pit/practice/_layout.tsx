@@ -2,10 +2,10 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
 import { FormProvider } from '../../../components/match-form';
 
-const PracticeLayout = () => {
+const MatchLayout = () => {
   return (
     <FormProvider>
-      <Tabs screenOptions={{ tabBarActiveTintColor: 'orange' }}>
+      <Tabs screenOptions={{ tabBarActiveTintColor: 'orange', tabBarLabelStyle: {fontFamily: 'Branding', fontSize: 8,}  }}>
         <Tabs.Screen
           name="index"
           options={{
@@ -37,6 +37,16 @@ const PracticeLayout = () => {
           }}
         />
         <Tabs.Screen
+          name="endgame"
+          options={{
+            title: 'Endgame',
+            headerShown: false,
+            tabBarIcon: ({ color, size, focused }) => (
+              <Ionicons name={focused ? 'prism' : 'prism-outline'} size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
           name="conclude"
           options={{
             title: 'Conclude',
@@ -62,4 +72,4 @@ const PracticeLayout = () => {
   );
 }
 
-export default PracticeLayout;
+export default MatchLayout;

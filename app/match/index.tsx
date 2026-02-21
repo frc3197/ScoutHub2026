@@ -6,10 +6,10 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useForm } from '../../components/match-form';
+import { Database } from '../database.types';
 import { FeedbackDatabase } from '../feedbacksupabasetypes';
 import { EVENT_KEY } from '../misc/EVENT_KEY';
 import { supabaseStatisticFeedback } from '../supabase';
-import { Database } from '../supabasetypes';
 
 const GeneralScreen = () => {
 
@@ -138,9 +138,10 @@ const styles = StyleSheet.create({
         fontSize: 20,
         width: '90%',
         textAlign: 'center',
-        color: 'red',
+        color: '#F37621',
         marginTop: 35,
-        fontFamily: 'Lexend-Light',
+        fontFamily: 'Lexend-Regular',
+        textDecorationLine: 'underline',
     },
 });
 

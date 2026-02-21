@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         width: '90%',
         textAlign: 'center',
-        color: 'teal',
+        color: '#2c2b29ff',
         marginTop: 35,
         fontFamily: 'Poppins-SemiBold',
     },

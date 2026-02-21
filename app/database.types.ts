@@ -12,150 +12,131 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "13.0.5"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       "Live Data": {
         Row: {
-          auto_l1: number
-          auto_l2: number
-          auto_l3: number
-          auto_l4: number
-          auto_made_net: number
-          auto_made_processor: number
-          auto_missed_coral: number
-          auto_missed_net: number
-          auto_mobility: boolean
-          auto_points: number
-          auto_start_position: Database["public"]["Enums"]["autostartpositionsreefscape"]
+          auto_climb: boolean
+          auto_climb_position:
+            | Database["public"]["Enums"]["climbpositionsrebuilt"]
+            | null
+          auto_depot: boolean
+          auto_fuel_taken_NZ: number
+          auto_issues: string | null
+          auto_outpost: boolean
+          auto_sos: number
+          auto_start_position: Database["public"]["Enums"]["autostartpositionsrebuilt"]
+          climb_type: Database["public"]["Enums"]["endgametyperebuilt"]
           comments: string
           created_at: string
+          defend_AZ: boolean | null
+          defend_bump_trench: boolean | null
+          defend_NZ: boolean | null
+          defense_strength: number | null
           disabled: boolean
           driver_rating: number
           driver_station: Database["public"]["Enums"]["driverstation"]
           endgame_points: number
-          endgame_type: Database["public"]["Enums"]["endgametypereefscape"]
-          id: number
+          how_defendable: number | null
+          id: string
+          incurred_penalties: boolean | null
           lost_comms: boolean
           match_number: number
           match_type: Database["public"]["Enums"]["matchscouttype"]
+          played_defense: boolean
           scout_name: string
+          shot_locations: Database["public"]["Enums"]["shotlocationsrebuilt"]
+          strategies: string
           team_number: number
-          tele_l1: number
-          tele_l2: number
-          tele_l3: number
-          tele_l4: number
-          tele_made_net: number
-          tele_missed_coral: number
-          tele_missed_net: number
+          tele_fuel_dozed: number
+          tele_fuel_impacted: number
+          tele_fuel_passed: number
+          tele_fuel_scored: number
           tele_points: number
-          tele_processor: number
-          total_algae: number
-          total_coral: number
-          total_gamepieces: number
-          total_points: number
+          throughput_speed: number
+          tioi_rating: number
         }
         Insert: {
-          auto_l1?: number
-          auto_l2?: number
-          auto_l3?: number
-          auto_l4?: number
-          auto_made_net?: number
-          auto_made_processor?: number
-          auto_missed_coral?: number
-          auto_missed_net?: number
-          auto_mobility?: boolean
-          auto_points: number
-          auto_start_position: Database["public"]["Enums"]["autostartpositionsreefscape"]
+          auto_climb: boolean
+          auto_climb_position?:
+            | Database["public"]["Enums"]["climbpositionsrebuilt"]
+            | null
+          auto_depot?: boolean
+          auto_fuel_taken_NZ?: number
+          auto_issues?: string | null
+          auto_outpost?: boolean
+          auto_sos: number
+          auto_start_position: Database["public"]["Enums"]["autostartpositionsrebuilt"]
+          climb_type?: Database["public"]["Enums"]["endgametyperebuilt"]
           comments?: string
           created_at?: string
+          defend_AZ?: boolean | null
+          defend_bump_trench?: boolean | null
+          defend_NZ?: boolean | null
+          defense_strength?: number | null
           disabled?: boolean
           driver_rating?: number
           driver_station?: Database["public"]["Enums"]["driverstation"]
           endgame_points?: number
-          endgame_type?: Database["public"]["Enums"]["endgametypereefscape"]
-          id?: number
+          how_defendable?: number | null
+          id: string
+          incurred_penalties?: boolean | null
           lost_comms?: boolean
           match_number?: number
           match_type?: Database["public"]["Enums"]["matchscouttype"]
+          played_defense: boolean
           scout_name?: string
+          shot_locations?: Database["public"]["Enums"]["shotlocationsrebuilt"]
+          strategies: string
           team_number?: number
-          tele_l1?: number
-          tele_l2?: number
-          tele_l3: number
-          tele_l4?: number
-          tele_made_net?: number
-          tele_missed_coral?: number
-          tele_missed_net?: number
+          tele_fuel_dozed?: number
+          tele_fuel_impacted: number
+          tele_fuel_passed?: number
+          tele_fuel_scored: number
           tele_points: number
-          tele_processor?: number
-          total_algae?: number
-          total_coral?: number
-          total_gamepieces?: number
-          total_points?: number
+          throughput_speed: number
+          tioi_rating: number
         }
         Update: {
-          auto_l1?: number
-          auto_l2?: number
-          auto_l3?: number
-          auto_l4?: number
-          auto_made_net?: number
-          auto_made_processor?: number
-          auto_missed_coral?: number
-          auto_missed_net?: number
-          auto_mobility?: boolean
-          auto_points?: number
-          auto_start_position?: Database["public"]["Enums"]["autostartpositionsreefscape"]
+          auto_climb?: boolean
+          auto_climb_position?:
+            | Database["public"]["Enums"]["climbpositionsrebuilt"]
+            | null
+          auto_depot?: boolean
+          auto_fuel_taken_NZ?: number
+          auto_issues?: string | null
+          auto_outpost?: boolean
+          auto_sos?: number
+          auto_start_position?: Database["public"]["Enums"]["autostartpositionsrebuilt"]
+          climb_type?: Database["public"]["Enums"]["endgametyperebuilt"]
           comments?: string
           created_at?: string
+          defend_AZ?: boolean | null
+          defend_bump_trench?: boolean | null
+          defend_NZ?: boolean | null
+          defense_strength?: number | null
           disabled?: boolean
           driver_rating?: number
           driver_station?: Database["public"]["Enums"]["driverstation"]
           endgame_points?: number
-          endgame_type?: Database["public"]["Enums"]["endgametypereefscape"]
-          id?: number
+          how_defendable?: number | null
+          id?: string
+          incurred_penalties?: boolean | null
           lost_comms?: boolean
           match_number?: number
           match_type?: Database["public"]["Enums"]["matchscouttype"]
+          played_defense?: boolean
           scout_name?: string
+          shot_locations?: Database["public"]["Enums"]["shotlocationsrebuilt"]
+          strategies?: string
           team_number?: number
-          tele_l1?: number
-          tele_l2?: number
-          tele_l3?: number
-          tele_l4?: number
-          tele_made_net?: number
-          tele_missed_coral?: number
-          tele_missed_net?: number
+          tele_fuel_dozed?: number
+          tele_fuel_impacted?: number
+          tele_fuel_passed?: number
+          tele_fuel_scored?: number
           tele_points?: number
-          tele_processor?: number
-          total_algae?: number
-          total_coral?: number
-          total_gamepieces?: number
-          total_points?: number
+          throughput_speed?: number
+          tioi_rating?: number
         }
         Relationships: []
       }
@@ -179,7 +160,6 @@ export type Database = {
       }
       "Pit Scouting": {
         Row: {
-          algae_description: string
           auto_description: string
           comments: string
           created_at: string
@@ -189,7 +169,6 @@ export type Database = {
           team_number: number
         }
         Insert: {
-          algae_description: string
           auto_description: string
           comments: string
           created_at?: string
@@ -199,7 +178,6 @@ export type Database = {
           team_number?: number
         }
         Update: {
-          algae_description?: string
           auto_description?: string
           comments?: string
           created_at?: string
@@ -218,10 +196,23 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      autostartpositionsrebuilt:
+        | "center-hub"
+        | "outpost-bump"
+        | "depot-bump"
+        | "outpost-trench"
+        | "depot-trench"
       autostartpositionsreefscape: "Far" | "Center" | "Processor"
+      climbpositionsrebuilt: "center" | "outpost" | "depot"
       driverstation: "B1" | "B2" | "B3" | "R1" | "R2" | "R3"
+      endgametyperebuilt: "L3" | "L2" | "L1" | "None" | "Failed"
       endgametypereefscape: "Nothing" | "Park" | "Shallow" | "Deep"
       matchscouttype: "match" | "pre" | "practice"
+      shotlocationsrebuilt:
+        | "hub-close"
+        | "anywhere"
+        | "known-medium"
+        | "cannot-shoot"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -347,15 +338,27 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
+      autostartpositionsrebuilt: [
+        "center-hub",
+        "outpost-bump",
+        "depot-bump",
+        "outpost-trench",
+        "depot-trench",
+      ],
       autostartpositionsreefscape: ["Far", "Center", "Processor"],
+      climbpositionsrebuilt: ["center", "outpost", "depot"],
       driverstation: ["B1", "B2", "B3", "R1", "R2", "R3"],
+      endgametyperebuilt: ["L3", "L2", "L1", "None", "Failed"],
       endgametypereefscape: ["Nothing", "Park", "Shallow", "Deep"],
       matchscouttype: ["match", "pre", "practice"],
+      shotlocationsrebuilt: [
+        "hub-close",
+        "anywhere",
+        "known-medium",
+        "cannot-shoot",
+      ],
     },
   },
 } as const

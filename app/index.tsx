@@ -112,7 +112,7 @@ const HomeScreen = () => {
           </View>
         </Animated.View>
 
-        <Text style={styles.footer}>Comp: 2026, Version: 2.0</Text>
+        <Text style={styles.footer}>Comp: 2026-PLY, Version: 2.0 {'\n'} FRC 3197 & Mason McManus</Text>
       </View>
     </ScrollView>
   );
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   logoStyle: {
     width: 200,
     height: 155,
-    margin: 20,
+    margin: 10,
   },
   titleText: {
     fontSize: 35,
@@ -141,8 +141,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Lexend-Light',
   },
   matchButton: {
-    backgroundColor: '#007bff',
-    borderColor: '#3b9affff',
+    backgroundColor: '#F37621',
+    borderColor: '#a55722ff',
     borderWidth: 2,
     paddingVertical: 12,
     paddingHorizontal: 25,
@@ -158,8 +158,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
   },
   pitButton: {
-    backgroundColor: '#63ab3f',
-    borderColor: '#76ca4cff',
+    backgroundColor: '#363432',
+    borderColor: '#2c2b29ff',
     borderWidth: 2,
     paddingVertical: 12,
     paddingHorizontal: 25,
@@ -185,8 +185,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   smallAnalysisButton: {
-    backgroundColor: '#a83232',
-    borderColor: '#bd4343ff',
+    backgroundColor: '#f37521ab',
+    borderColor: '#9649169c',
     borderWidth: 2,
     paddingHorizontal: 25,
     borderRadius: 8,
@@ -202,8 +202,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
   },
   smallAdminButton: {
-    backgroundColor: '#7628ad',
-    borderColor: '#8c3ac7ff',
+    backgroundColor: '#363432ab',
+    borderColor: '#2c2b297c',
     borderWidth: 2,
     paddingHorizontal: 25,
     borderRadius: 8,
@@ -225,7 +225,8 @@ const styles = StyleSheet.create({
   },
   footer: {
     marginTop: 25,
-    marginBottom: 25,
+    marginBottom: 10,
+    fontSize: 13,
     fontFamily: 'Lexend-Light',
   },
 });

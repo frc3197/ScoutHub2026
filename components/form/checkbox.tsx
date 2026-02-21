@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         gap: 10,
         borderWidth: 4,
+        justifyContent: 'center',
         width: 'auto',
         marginHorizontal: 25,
     },

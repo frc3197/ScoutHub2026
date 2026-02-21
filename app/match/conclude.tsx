@@ -13,7 +13,6 @@ import { FeedbackDataInsert, LiveDataInsert, supabase, supabaseStatisticFeedback
 // inside your component
 import SelectWithLabel from '@/components/form/SelectWithLabel';
 import { EVENT_KEY } from '../misc/EVENT_KEY';
-import { Database } from '../supabasetypes';
 const router = useRouter();
 
 const ConcludeScreen = () => {
@@ -34,11 +33,11 @@ const ConcludeScreen = () => {
 
                 <Checkbox value={state.disabled} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'disabled', value }) }} label="Disabled/Broke Down?"></Checkbox>
 
-                <SelectWithLabel label='Driver Skill:' itemLabelFormatter={(v:string) => {switch(v) {case '5': return 'Excellent'; case '4': return 'Good'; case '3': return 'Alright'; case '2': return 'Clunky'; case '1': return 'Awful'; default: return 'n/a';}}} selectedValue={String(state.driverSkill)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'driverSkill', value }) }} />
+                <SelectWithLabel label='Driver Skill:' itemLabelFormatter={(v: string) => { switch (v) { case '5': return 'Excellent'; case '4': return 'Good'; case '3': return 'Alright'; case '2': return 'Clunky'; case '1': return 'Awful'; default: return 'n/a'; } }} selectedValue={String(state.driverSkill)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'driverSkill', value }) }} />
 
-                <SelectWithLabel label='Throughput Speed:' itemLabelFormatter={(v:string) => {switch(v) {case '5': return 'Instant'; case '4': return 'Fast'; case '3': return 'Alright'; case '2': return 'Slow'; case '1': return 'Awful'; default: return 'n/a';}}} selectedValue={String(state.tioiRating)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'tioiRating', value }) }} />
+                <SelectWithLabel label='Throughput Speed:' itemLabelFormatter={(v: string) => { switch (v) { case '5': return 'Instant'; case '4': return 'Fast'; case '3': return 'Alright'; case '2': return 'Slow'; case '1': return 'Awful'; default: return 'n/a'; } }} selectedValue={String(state.tioiRating)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'tioiRating', value }) }} />
 
-                <SelectWithLabel label='TIOI/Intake rating:' itemLabelFormatter={(v:string) => {switch(v) {case '5': return 'Excellent'; case '4': return 'Slurping'; case '3': return 'Alright'; case '2': return 'Poor'; case '1': return 'Awful'; default: return 'n/a';}}} selectedValue={String(state.throughputSpeed)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'throughputSpeed', value }) }} />
+                <SelectWithLabel label='TIOI/Intake rating:' itemLabelFormatter={(v: string) => { switch (v) { case '5': return 'Excellent'; case '4': return 'Slurping'; case '3': return 'Alright'; case '2': return 'Poor'; case '1': return 'Awful'; default: return 'n/a'; } }} selectedValue={String(state.throughputSpeed)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'throughputSpeed', value }) }} />
 
                 <View style={styles.verticalContainer}>
                     <Text style={styles.commentLabel}>Team's strategies:</Text>
@@ -47,7 +46,7 @@ const ConcludeScreen = () => {
                         onChangeText={(text) =>
                             dispatch({ type: 'UPDATE_FIELD', field: 'strategyText', value: text })
                         }
-                        value={state.commentText}
+                        value={state.strategyText}
                         placeholderTextColor='grey'
                         placeholder='Write about any strategies we could use or intercept... consider active vs inactive...'
                         multiline={true}
@@ -93,51 +92,26 @@ const ConcludeScreen = () => {
             const matchMissing = !state.matchNumber?.trim();
             const commentMissing = !state.commentText?.trim();
 
-            const autoPointsCount = (state.autoL4Count * 7) + (state.autoL3Count * 6) + (state.autoL2Count * 4) + (state.autoL1Count * 3) + (state.autoNetCount * 4) + (state.autoProcessorCount * 3) + (state.leave ? 3 : 0);
-            const telePointsCount = (state.teleL4Count * 5) + (state.teleL3Count * 4) + (state.teleL2Count * 3) + (state.teleL1Count * 2) + (state.teleNetCount * 4) + (state.teleProcessorCount * 3);
+            var telePointsCount = (state.teleShotsMade) + (0.5 * state.teleFuelPassed) + (0.15 * state.teleFuelPassed);
+
+            if (state.incurredPenalties)
+                telePointsCount -= 7;
 
             var endgamePointsCount = 0;
-            if (state.selectedClimb == 'No') {
-                endgamePointsCount = state.park ? 2 : 0;
-            } else {
-                endgamePointsCount = state.selectedClimb == 'Deep' ? 12 : 6;
-            }
-
-            const totalPointsCount = autoPointsCount + telePointsCount + endgamePointsCount;
-
-            const autoCoralCount = (state.autoL4Count) + (state.autoL3Count) + (state.autoL2Count) + (state.autoL1Count);
-            const teleCoralCount = (state.teleL4Count) + (state.teleL3Count) + (state.teleL2Count) + (state.teleL1Count);
-            const totalCoralCount = autoCoralCount + teleCoralCount;
-            const totalAlgaeCount = (state.autoNetCount) + (state.autoProcessorCount) + (state.teleNetCount) + (state.teleProcessorCount);
-            const totalGamepiecesCount = totalCoralCount + totalAlgaeCount;
-
-            // Submit to Firestore
-            /*
-            await setDoc(doc(database, 'scoutingForms', `match${state.matchNumber}_team${state.teamNumber}`), {
-                ...state,
-                teamNumber: teamMissing ? -1 : state.teamNumber,
-                matchNumber: matchMissing ? -1 : state.matchNumber,
-                commentText: commentMissing ? `${state.nameText} didn't write a comment :(` : state.commentText,
-                park: state.selectedClimb == 'No' ? state.park : false,
-                timestamp: new Date(),
-                autoPoints: autoPointsCount,
-                telePoints: telePointsCount,
-                endgamePoints: endgamePointsCount,
-                totalPoints: totalPointsCount,
-                autoCoral: autoCoralCount,
-                teleCoral: teleCoralCount,
-                totalCoral: totalCoralCount,
-                totalAlgae: totalAlgaeCount,
-                totalGamepieces: totalGamepiecesCount,
-                nameText: state.nameText == "GUEST" ? "GUEST" : JSON.parse(state.nameText)['first_name'] + ' ' + JSON.parse(state.nameText)['last_initial']
-            });*/
-
-            var endgameType: Database['public']['Enums']['endgametypereefscape'] = 'Nothing';
-            if (state.park) {
-                endgameType = 'Park';
-            }
-            if (state.selectedClimb == 'Deep') {
-                endgameType = 'Deep'
+            switch (state.climbType) {
+                case 'Failed':
+                    break;
+                case 'None':
+                    break;
+                case 'L1':
+                    endgamePointsCount = 10;
+                    break;
+                case 'L2':
+                    endgamePointsCount = 20;
+                    break;
+                case 'L3':
+                    endgamePointsCount = 30;
+                    break;
             }
 
             const scoutName =
@@ -152,42 +126,45 @@ const ConcludeScreen = () => {
                         }
                     })();
 
+            const ID = state.matchNumber + '-' + state.teamNumber;
+
             const dataInsert: LiveDataInsert = {
                 scout_name: scoutName,
-                auto_l1: state.autoL1Count,
-                auto_l2: state.autoL2Count,
-                auto_l3: state.autoL3Count,
-                auto_l4: state.autoL4Count,
-                auto_made_net: state.autoNetCount,
-                auto_made_processor: state.autoProcessorCount,
-                auto_missed_coral: state.autoMissCoralCount,
-                auto_missed_net: state.autoMissNetCount,
-                auto_mobility: state.leave,
-                auto_points: autoPointsCount,
+                auto_climb: state.autoClimb,
+                auto_climb_position: state.autoClimb ? state.autoClimbLocation : null,
+                auto_depot: state.autoDepot,
+                auto_fuel_taken_NZ: state.fuelTakenFromNeutralZone,
+                auto_issues: state.autoIssues.length > 3 ? state.autoIssues : null,
+                auto_outpost: state.autoOutpost,
+                auto_sos: state.autoStrengthOfShooting,
                 auto_start_position: state.selectedStartPosition,
-                comments: state.commentText,
+                climb_type: state.climbType,
+                comments: state.commentText.length > 5 ? state.commentText : scoutName + " didn't write a comment 😡.",
+                defend_AZ: state.playedDefense && state.defendAllianceZone,
+                defend_bump_trench: state.playedDefense && state.defendBumpTrench,
+                defend_NZ: state.playedDefense && state.defendNeutral,
+                defense_strength: state.playedDefense ? state.defenseStrength : null,
                 disabled: state.disabled,
                 driver_rating: state.driverSkill,
                 driver_station: state.selectedStation,
                 endgame_points: endgamePointsCount,
-                endgame_type: endgameType,
+                id: ID,
+                incurred_penalties: state.incurredPenalties,
                 lost_comms: state.lostComms,
                 match_number: parseInt(state.matchNumber),
                 match_type: 'match',
+                played_defense: state.playedDefense,
+                strategies: state.strategyText,
                 team_number: parseInt(state.teamNumber),
-                tele_l1: state.teleL1Count,
-                tele_l2: state.teleL2Count,
-                tele_l3: state.teleL3Count,
-                tele_l4: state.teleL4Count,
-                tele_made_net: state.teleNetCount,
-                tele_missed_coral: state.teleMissCoralCount,
-                tele_missed_net: state.teleMissNetCount,
+                tele_fuel_dozed: state.teleFuelDozed,
+                tele_fuel_impacted: state.teleFuelDozed + state.teleFuelPassed + state.teleShotsMade,
+                tele_fuel_passed: state.teleFuelPassed,
+                tele_fuel_scored: state.teleShotsMade,
                 tele_points: telePointsCount,
-                tele_processor: state.teleProcessorCount,
-                total_algae: totalAlgaeCount,
-                total_coral: totalCoralCount,
-                total_gamepieces: totalGamepiecesCount,
-                total_points: totalPointsCount,
+                throughput_speed: state.throughputSpeed,
+                tioi_rating: state.tioiRating,
+                shot_locations: state.shotLocations,
+                how_defendable: state.howDefendable,
             };
 
             const { error } = await supabase.from('Live Data').insert(
@@ -238,20 +215,6 @@ const submitWager = async (state: FormState) => {
     formData.append('Wager', await AsyncStorage.getItem('wagerAmount') ?? '0');
     formData.append('Prediction', await AsyncStorage.getItem('predictedAlliance') ?? 'Red');
 
-    const autoPointsCount = ((state.autoL4Count) * 7) + ((state.autoL3Count) * 6) + ((state.autoL2Count) * 4) + ((state.autoL1Count) * 3) + ((state.autoNetCount) * 4) + ((state.autoProcessorCount) * 3) + (state.leave ? 3 : 0);
-    const telePointsCount = ((state.teleL4Count) * 5) + ((state.teleL3Count) * 4) + ((state.teleL2Count) * 3) + ((state.teleL1Count) * 2) + ((state.teleNetCount) * 4) + ((state.teleProcessorCount) * 3);
-
-    var endgamePointsCount = 0;
-    if (state.selectedClimb == 'No') {
-        endgamePointsCount = state.park ? 2 : 0;
-    } else {
-        endgamePointsCount = state.selectedClimb == 'Deep' ? 12 : 6;
-    }
-
-    const totalPointsCount = autoPointsCount + telePointsCount + endgamePointsCount;
-
-    console.log("SJKA")
-
     try {
         const uuid = await AsyncStorage.getItem('uuid');
 
@@ -278,7 +241,7 @@ const submitWager = async (state: FormState) => {
             member_id: uuid,
             first_name: state.nameText == "GUEST" ? "GUEST" : (state.nameText),
             wager: parseInt(wagerAmount),
-            total_points: totalPointsCount,
+            tele_fuel: state.teleShotsMade + state.teleFuelDozed + state.teleFuelPassed,
             team_number: parseInt(state.teamNumber),
             prediction: predictedAlliance as ('red' | 'blue'),
             event_key: EVENT_KEY,

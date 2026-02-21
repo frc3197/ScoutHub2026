@@ -1,4 +1,3 @@
-import { Picker } from '@react-native-picker/picker';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -8,11 +7,12 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FormAction, FormState, useForm } from '../../../components/match-form';
 
-import { Database } from '@/app/supabasetypes';
 import Checkbox from '../../../components/form/checkbox';
-import { LiveDataInsert, supabase } from '../../supabase';
+import { FeedbackDataInsert, LiveDataInsert, supabase, supabaseStatisticFeedback } from '../../supabase';
 
 // inside your component
+import SelectWithLabel from '@/components/form/SelectWithLabel';
+import { EVENT_KEY } from '../../misc/EVENT_KEY';
 const router = useRouter();
 
 const ConcludeScreen = () => {
@@ -29,26 +29,29 @@ const ConcludeScreen = () => {
         <ScrollView style={styles.scrollView}>
             <View style={styles.pageContainer}>
 
-                <Text style={styles.warningText}>This page is for PRACTICE SCOUTING only!!! DO NOT SCOUT QUALIFICATION OR PRE-SCOUTING MATCHES HERE! To scout those, go to the home page.</Text>
+                <Checkbox value={state.lostComms} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'lostComms', value }) }} label="Lost Comms?"></Checkbox>
 
-                <Checkbox field="lostComms" label="Lost comms?"></Checkbox>
+                <Checkbox value={state.disabled} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'disabled', value }) }} label="Disabled/Broke Down?"></Checkbox>
 
-                <Checkbox field="disabled" label="Disabled/broke down?"></Checkbox>
+                <SelectWithLabel label='Driver Skill:' itemLabelFormatter={(v: string) => { switch (v) { case '5': return 'Excellent'; case '4': return 'Good'; case '3': return 'Alright'; case '2': return 'Clunky'; case '1': return 'Awful'; default: return 'n/a'; } }} selectedValue={String(state.driverSkill)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'driverSkill', value }) }} />
 
-                <View style={[styles.horizontalContainer, { width: '90%', marginTop: 15, }]}>
-                    <Text style={styles.label}>Driver rating:</Text>
-                    <Picker
-                        style={styles.input}
-                        selectedValue={state.driverSkill}
-                        onValueChange={(value) =>
-                            dispatch({ type: 'UPDATE_FIELD', field: 'driverSkill', value })
-                        }>
-                        <Picker.Item label='Excellent' value='5' />
-                        <Picker.Item label='Good' value='4' />
-                        <Picker.Item label='Alright' value='3' />
-                        <Picker.Item label='Clunky' value='2' />
-                        <Picker.Item label='Awful' value='1' />
-                    </Picker>
+                <SelectWithLabel label='Throughput Speed:' itemLabelFormatter={(v: string) => { switch (v) { case '5': return 'Instant'; case '4': return 'Fast'; case '3': return 'Alright'; case '2': return 'Slow'; case '1': return 'Awful'; default: return 'n/a'; } }} selectedValue={String(state.tioiRating)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'tioiRating', value }) }} />
+
+                <SelectWithLabel label='TIOI/Intake rating:' itemLabelFormatter={(v: string) => { switch (v) { case '5': return 'Excellent'; case '4': return 'Slurping'; case '3': return 'Alright'; case '2': return 'Poor'; case '1': return 'Awful'; default: return 'n/a'; } }} selectedValue={String(state.throughputSpeed)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'throughputSpeed', value }) }} />
+
+                <View style={styles.verticalContainer}>
+                    <Text style={styles.commentLabel}>Team's strategies:</Text>
+                    <TextInput
+                        style={styles.strategyInput}
+                        onChangeText={(text) =>
+                            dispatch({ type: 'UPDATE_FIELD', field: 'strategyText', value: text })
+                        }
+                        value={state.strategyText}
+                        placeholderTextColor='grey'
+                        placeholder='Write about any strategies we could use or intercept... consider active vs inactive...'
+                        multiline={true}
+                        numberOfLines={4}
+                    />
                 </View>
 
                 <View style={styles.verticalContainer}>
@@ -60,7 +63,7 @@ const ConcludeScreen = () => {
                         }
                         value={state.commentText}
                         placeholderTextColor='grey'
-                        placeholder='Please write a useful comment for alliance considerations, not just `slow at L2 good climb.`'
+                        placeholder='Think about how this team could contribute with us toward winning a match...'
                         multiline={true}
                         numberOfLines={4}
                     />
@@ -68,9 +71,9 @@ const ConcludeScreen = () => {
 
                 <TouchableOpacity style={styles.submitButton}
                     onPress={() => {
+                        submitWager(state);
                         submitForm(state, dispatch);
                     }}
-                    disabled={isDisabled}
                 >
                     <Text style={styles.buttonText}>Submit Form</Text>
                 </TouchableOpacity>
@@ -78,42 +81,39 @@ const ConcludeScreen = () => {
             </View>
         </ScrollView>
     );
-    
+
     async function submitForm(state: FormState, dispatch: React.Dispatch<FormAction>) {
         setIsDisabled(true);
+
         console.log('Submitting form...');
-    
+
         try {
             const teamMissing = !state.teamNumber?.trim();
             const matchMissing = !state.matchNumber?.trim();
             const commentMissing = !state.commentText?.trim();
-    
-            const autoPointsCount = (state.autoL4Count * 7) + (state.autoL3Count * 6) + (state.autoL2Count * 4) + (state.autoL1Count * 3) + (state.autoNetCount * 4) + (state.autoProcessorCount * 3) + (state.leave ? 3 : 0);
-            const telePointsCount = (state.teleL4Count * 5) + (state.teleL3Count * 4) + (state.teleL2Count * 3) + (state.teleL1Count * 2) + (state.teleNetCount * 4) + (state.teleProcessorCount * 3);
-    
+
+            var telePointsCount = (state.teleShotsMade) + (0.5 * state.teleFuelPassed) + (0.15 * state.teleFuelPassed);
+
+            if (state.incurredPenalties)
+                telePointsCount -= 7;
+
             var endgamePointsCount = 0;
-            if (state.selectedClimb == 'No') {
-                endgamePointsCount = state.park ? 2 : 0;
-            } else {
-                endgamePointsCount = state.selectedClimb == 'Deep' ? 12 : 6;
+            switch (state.climbType) {
+                case 'Failed':
+                    break;
+                case 'None':
+                    break;
+                case 'L1':
+                    endgamePointsCount = 10;
+                    break;
+                case 'L2':
+                    endgamePointsCount = 20;
+                    break;
+                case 'L3':
+                    endgamePointsCount = 30;
+                    break;
             }
-    
-            const totalPointsCount = autoPointsCount + telePointsCount + endgamePointsCount;
-    
-            const autoCoralCount = (state.autoL4Count) + (state.autoL3Count) + (state.autoL2Count) + (state.autoL1Count);
-            const teleCoralCount = (state.teleL4Count) + (state.teleL3Count) + (state.teleL2Count) + (state.teleL1Count);
-            const totalCoralCount = autoCoralCount + teleCoralCount;
-            const totalAlgaeCount = (state.autoNetCount) + (state.autoProcessorCount) + (state.teleNetCount) + (state.teleProcessorCount);
-            const totalGamepiecesCount = totalCoralCount + totalAlgaeCount;
-    
-            var endgameType: Database['public']['Enums']['endgametypereefscape'] = 'Nothing';
-            if (state.park) {
-                endgameType = 'Park';
-            }
-            if (state.selectedClimb == 'Deep') {
-                endgameType = 'Deep'
-            }
-    
+
             const scoutName =
                 state.nameText === "GUEST"
                     ? "GUEST"
@@ -125,63 +125,64 @@ const ConcludeScreen = () => {
                             return "Unknown";
                         }
                     })();
-    
+
+            const ID = state.matchNumber + '-' + state.teamNumber;
+
             const dataInsert: LiveDataInsert = {
                 scout_name: scoutName,
-                auto_l1: state.autoL1Count,
-                auto_l2: state.autoL2Count,
-                auto_l3: state.autoL3Count,
-                auto_l4: state.autoL4Count,
-                auto_made_net: state.autoNetCount,
-                auto_made_processor: state.autoProcessorCount,
-                auto_missed_coral: state.autoMissCoralCount,
-                auto_missed_net: state.autoMissNetCount,
-                auto_mobility: state.leave,
-                auto_points: autoPointsCount,
+                auto_climb: state.autoClimb,
+                auto_climb_position: state.autoClimb ? state.autoClimbLocation : null,
+                auto_depot: state.autoDepot,
+                auto_fuel_taken_NZ: state.fuelTakenFromNeutralZone,
+                auto_issues: state.autoIssues.length > 3 ? state.autoIssues : null,
+                auto_outpost: state.autoOutpost,
+                auto_sos: state.autoStrengthOfShooting,
                 auto_start_position: state.selectedStartPosition,
-                comments: state.commentText,
+                climb_type: state.climbType,
+                comments: state.commentText.length > 5 ? state.commentText : scoutName + " didn't write a comment 😡.",
+                defend_AZ: state.playedDefense && state.defendAllianceZone,
+                defend_bump_trench: state.playedDefense && state.defendBumpTrench,
+                defend_NZ: state.playedDefense && state.defendNeutral,
+                defense_strength: state.playedDefense ? state.defenseStrength : null,
                 disabled: state.disabled,
                 driver_rating: state.driverSkill,
-                driver_station: state.selectedStation,
+                driver_station: 'B1',
                 endgame_points: endgamePointsCount,
-                endgame_type: endgameType,
+                id: ID,
+                incurred_penalties: state.incurredPenalties,
                 lost_comms: state.lostComms,
-                match_number: (Math.round(Math.random() * 50000)),
+                match_number: Math.round(Math.random() * 10000),
                 match_type: 'practice',
+                played_defense: state.playedDefense,
+                strategies: state.strategyText,
                 team_number: parseInt(state.teamNumber),
-                tele_l1: state.teleL1Count,
-                tele_l2: state.teleL2Count,
-                tele_l3: state.teleL3Count,
-                tele_l4: state.teleL4Count,
-                tele_made_net: state.teleNetCount,
-                tele_missed_coral: state.teleMissCoralCount,
-                tele_missed_net: state.teleMissNetCount,
+                tele_fuel_dozed: state.teleFuelDozed,
+                tele_fuel_impacted: state.teleFuelDozed + state.teleFuelPassed + state.teleShotsMade,
+                tele_fuel_passed: state.teleFuelPassed,
+                tele_fuel_scored: state.teleShotsMade,
                 tele_points: telePointsCount,
-                tele_processor: state.teleProcessorCount,
-                total_algae: totalAlgaeCount,
-                total_coral: totalCoralCount,
-                total_gamepieces: totalGamepiecesCount,
-                total_points: totalPointsCount,
+                throughput_speed: state.throughputSpeed,
+                tioi_rating: state.tioiRating,
             };
-    
+
             const { error } = await supabase.from('Live Data').insert(
                 dataInsert
             );
-    
+
             if (error) {
                 alert('ERROR: ' + error.message + (error.code == '23502' ? '. \n\nThis error is likely due to an empty input field, make sure the form is fully filled out.' : '.\n\nThis error cause is unknown, connection is always a culprit. Report this issue to scout lead.'));
                 setIsDisabled(false);
             } else {
-                alert('Data submitted successfully! A new form will begin now.');
                 setIsDisabled(false);
-    
-    
+                alert('Data submitted successfully! A new form will begin now.');
+
+
                 await AsyncStorage.setItem('showWager', 'true');
-    
+
                 const savedName = state.nameText;
                 const savedStation = state.selectedStation;
                 const currentMatch = parseInt(state.matchNumber) || 0;
-    
+
                 dispatch({ type: 'RESET_FORM' });
                 dispatch({ type: 'UPDATE_FIELD', field: 'nameText', value: savedName });
                 dispatch({ type: 'UPDATE_FIELD', field: 'selectedStation', value: savedStation });
@@ -190,24 +191,76 @@ const ConcludeScreen = () => {
                     field: 'matchNumber',
                     value: (currentMatch + 1).toString(),
                 });
-    
+
                 router.replace('./');
             }
         } catch (error) {
-            console.error('Error submitting data: ', error);
+            console.error('Error submitting form: ', error);
             alert(error);
             setIsDisabled(false);
         }
     }
 }
 
+const submitWager = async (state: FormState) => {
+    const formData = new URLSearchParams();
+    formData.append('Name', state.nameText);
+
+    // TODO UPDATE THIS OF MAKE IT WORK BETTER
+    formData.append('Event', state.nameText);
+
+    formData.append('Match', state.matchNumber);
+    formData.append('Wager', await AsyncStorage.getItem('wagerAmount') ?? '0');
+    formData.append('Prediction', await AsyncStorage.getItem('predictedAlliance') ?? 'Red');
+
+    try {
+        const uuid = await AsyncStorage.getItem('uuid');
+
+        if (uuid == "GUEST")
+            return;
+
+        const wagerAmount = await AsyncStorage.getItem('wagerAmount');
+
+        const predictedAlliance = await AsyncStorage.getItem('predictedAlliance');
+
+        if (!uuid) {
+            throw new Error('No UUID found in storage');
+        }
+        if (!wagerAmount) {
+            throw new Error('No wager amount found in storage');
+        }
+        if (!predictedAlliance) {
+            throw new Error('No predicted alliance found in storage');
+        }
+        console.log(state)
+
+        const dataInsert: FeedbackDataInsert = {
+            match_number: parseInt(state.matchNumber),
+            member_id: uuid,
+            first_name: state.nameText == "GUEST" ? "GUEST" : (state.nameText),
+            wager: parseInt(wagerAmount),
+            tele_fuel: state.teleShotsMade + state.teleFuelDozed + state.teleFuelPassed,
+            team_number: parseInt(state.teamNumber),
+            prediction: predictedAlliance as ('red' | 'blue'),
+            event_key: EVENT_KEY,
+        }
+
+        const { error } = await supabaseStatisticFeedback
+            .from('matches_predictions')
+            .insert(dataInsert)
+    } catch (error) {
+        console.log('ERROR SUBMITTING PREDICTION:' + error);
+        alert(error);
+    }
+};
 
 const styles = StyleSheet.create({
     pageContainer: {
         flex: 1,
-        paddingTop: 5,
+        paddingTop: 15,
         alignItems: 'center',
         backgroundColor: '#FFF6EA',
+        gap: 20,
     },
     scrollView: {
         width: '100%',
@@ -218,17 +271,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 10,
         alignItems: 'center',
-    },
-    checkbox: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 25,
-        backgroundColor: '#e6d4c3',
-        padding: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-        gap: 10,
     },
     checkboxText: {
         fontSize: 24
@@ -244,15 +286,6 @@ const styles = StyleSheet.create({
         borderColor: 'black',
         backgroundColor: '#FFF6EA',
         color: 'black',
-    },
-    warningText: {
-        fontSize: 20,
-        width: '90%',
-        textAlign: 'center',
-        color: 'white',
-        marginVertical: 15,
-        backgroundColor: 'red',
-        padding: 10,
     },
     label: {
         fontSize: 20,
@@ -276,26 +309,44 @@ const styles = StyleSheet.create({
         zIndex: 5,
         backgroundColor: '#FFF6EA',
         padding: 5,
-        borderWidth: 1,
-        //width: '50%',
-        borderRadius: 3,
-        borderColor: 'black',
+        paddingHorizontal: 10,
+        borderWidth: 2,
+        borderRadius: 5,
+        borderColor: '#0000007e',
         marginLeft: 20,
+        fontFamily: 'Lexend-Regular',
     },
     commentInput: {
         height: 200,
         margin: 12,
         marginTop: 20,
-        borderWidth: 1,
+        borderWidth: 2,
         padding: 10,
         paddingTop: 25,
         fontSize: 20,
         width: '93.5%',
-        borderRadius: 3,
-        borderColor: 'black',
+        borderRadius: 10,
+        borderColor: '#0000007e',
         backgroundColor: '#FFF6EA',
         color: 'black',
         marginBottom: 20,
+        fontFamily: 'Poppins-Light',
+    },
+    strategyInput: {
+        height: 130,
+        margin: 12,
+        marginTop: 20,
+        borderWidth: 2,
+        padding: 10,
+        paddingTop: 25,
+        fontSize: 20,
+        width: '93.5%',
+        borderRadius: 10,
+        borderColor: '#0000007e',
+        backgroundColor: '#FFF6EA',
+        color: 'black',
+        marginBottom: 0,
+        fontFamily: 'Poppins-Light',
     },
     submitButton: {
         backgroundColor: '#ff8c00',
@@ -303,14 +354,14 @@ const styles = StyleSheet.create({
         paddingHorizontal: 25,
         borderRadius: 8,
         alignItems: 'center',
-        width: '50%',
+        width: 240,
         marginTop: 35,
         marginBottom: 50,
     },
     buttonText: {
         color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
+        fontSize: 24,
+        fontFamily: 'Poppins-Medium',
     },
 });
 

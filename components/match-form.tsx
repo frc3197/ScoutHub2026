@@ -1,5 +1,5 @@
+import { Database } from "@/app/database.types";
 import React, { createContext, ReactNode, useContext, useReducer } from "react";
-import { Database } from "../app/supabasetypes";
 
 // Define the shape of your form state
 export interface FormState {
@@ -10,37 +10,43 @@ export interface FormState {
   teamNumber: string;
   selectedStation: Database['public']['Enums']['driverstation'];
 
-  selectedStartPosition: Database['public']['Enums']['autostartpositionsreefscape'];
+  selectedStartPosition: Database['public']['Enums']['autostartpositionsrebuilt'];
   autoClimb: boolean;
-  autoClimbLocation: string;
+  autoClimbLocation: Database['public']['Enums']['climbpositionsrebuilt'];
   autoStrengthOfShooting: number;
   autoIssues: string;
   fuelTakenFromNeutralZone: number;
   autoPathDetails: string;
+  autoDepot: boolean;
+  autoOutpost: boolean;
 
   teleShotsMade: number;
   teleFuelPassed: number;
-  teleFuelPushed: number;
-  telePassLocations: string;
+  teleFuelDozed: number;
+  telePoints: number;
+  //telePassLocations: string;
 
-  defenseStrength: number;
-  foulsIncurred: number;
   playedDefense: boolean;
+  defenseStrength: number;
   defendBumpTrench: boolean;
   defendNeutral: boolean;
   defendAllianceZone: boolean;
 
-  climbType: string;
-  teleClimbLocation: string;
+  climbType: Database['public']['Enums']['endgametyperebuilt'];
+  teleClimbLocation: Database['public']['Enums']['climbpositionsrebuilt'];
   teleClimbTime: string;
+  endgamePoints: number;
+
+  shotLocations: Database['public']['Enums']['shotlocationsrebuilt'];
+  howDefendable: number;
 
   tioiRating: number;
   throughputSpeed: number;
+  driverSkill: number;
 
   incurredPenalties: boolean;
   lostComms: boolean;
   disabled: boolean;
-  driverSkill: number;
   strategyText: string;
   commentText: string;
 }
@@ -54,38 +60,44 @@ export const initialState: FormState = {
   teamNumber: "",
   selectedStation: "B1",
 
-  selectedStartPosition: 'Far',
+  selectedStartPosition: 'center-hub',
   autoClimb: false,
-  autoClimbLocation: '',
+  autoClimbLocation: 'center',
   autoStrengthOfShooting: 3,
   autoIssues: '',
+  autoDepot: false,
+  autoOutpost: false,
   fuelTakenFromNeutralZone: 0,
   autoPathDetails: '{}',
 
   teleShotsMade: 0,
   teleFuelPassed: 0,
-  teleFuelPushed: 0,
-  telePassLocations: '',
-  defenseStrength: 0,
-  foulsIncurred: 0,
+  teleFuelDozed: 0,
+  //telePassLocations: '',
+  defenseStrength: 3,
   playedDefense: false,
   defendBumpTrench: false,
   defendNeutral: false,
   defendAllianceZone: false,
 
-  climbType: 'No attempt',
-  teleClimbLocation: '',
+  climbType: 'None',
+  teleClimbLocation: 'center',
   teleClimbTime: '',
 
   tioiRating: 3,
   throughputSpeed: 3,
+
+  shotLocations: 'cannot-shoot',
+  howDefendable: 1,
 
   incurredPenalties: false,
   lostComms: false,
   disabled: false,
   driverSkill: 3,
   strategyText: '',
-  commentText: "",
+  commentText: '',
+  telePoints: 0,
+  endgamePoints: 0
 };
 
 // Define action types

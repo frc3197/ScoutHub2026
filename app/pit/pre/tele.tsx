@@ -1,110 +1,80 @@
-// @ts-ignore
-import AlgaeImage from '@/assets/images/algae.png';
-import { Picker } from '@react-native-picker/picker';
-import React from 'react';
-import { Animated, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-// @ts-ignore
-import ReefImage from '../../../assets/images/reef.png';
+import SelectWithLabel from '@/components/form/SelectWithLabel';
+import { useAudioPlayer } from 'expo-audio';
+import { Image } from 'expo-image';
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Checkbox from '../../../components/form/checkbox';
-import Counter from '../../../components/form/StackedCounter';
+import StackedCounter from '../../../components/form/StackedCounter';
 import { useForm } from '../../../components/match-form';
+
+const bzzBzzBzz = require('@/assets/sounds/bzzbzzbzz.wav');
+const woah = require('@/assets/sounds/woowooaa.wav');
 
 const TeleScreen = () => {
 
     const { state, dispatch } = useForm();
 
-    const rotateAnim = React.useRef(new Animated.Value(0)).current;
-    const [rotated, setRotated] = React.useState(false);
+    const bzzPlayer = useAudioPlayer(bzzBzzBzz);
+    const woahPlayer = useAudioPlayer(woah);
 
-    const rotateInterpolate = rotateAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['0deg', '360deg'],
-    });
-
-    const animatedStyle = {
-        transform: [{ rotate: rotateInterpolate }],
-    };
-
-    const handleAlgaePress = () => {
-        Animated.timing(rotateAnim, {
-            toValue: rotated ? 0 : 1,
-            duration: 500,
-            useNativeDriver: true,
-        }).start(() => {
-            setRotated(!rotated);
-        });
-    };
+    const [funColorSwitch, setFunColorSwitch] = useState(0);
 
     return (
         <ScrollView style={styles.scrollView}>
             <View style={styles.pageContainer}>
-                <Text style={styles.title}>TELEOPERATED MODE</Text>
+                <Text style={styles.title}>TELEOP MODE</Text>
 
-<Text style={styles.warningText}>This page is for PRE SCOUTING only!!! DO NOT SCOUT QUALIFICATION OR PRACTICE MATCHES HERE! To scout those, go to the home page.</Text>
-                <View style={styles.reefContainer}>
-                    <Image source={ReefImage} style={styles.reefImage}></Image>
-                    <View style={styles.reefOperationsContainer}>
-
-                        {/* LEVEL FOUR */}
-                        <Counter field="teleL4Count" label="L4:" type="coral-make"></Counter>
-
-                        {/* LEVEL THREE */}
-                        <Counter field="teleL3Count" label="L3:" type="coral-make"></Counter>
-
-                        {/* LEVEL TWO */}
-                        <Counter field="teleL2Count" label="L2:" type="coral-make"></Counter>
-
-                        {/* LEVEL ONE */}
-                        <Counter field="teleL1Count" label="L1:" type="coral-make"></Counter>
-
-
-                    </View>
+                <View style={styles.verticalContainer}>
+                    <StackedCounter value={state.teleShotsMade} min={0} type='neutral' label="Shots made:" callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'teleShotsMade', value }) }}></StackedCounter>
+                    <TouchableOpacity onPress={() => {
+                        setFunColorSwitch(funColorSwitch == 1 ? 0 : 1);
+                    }} style={[styles.horizontalContainer, { filter: `invert(${funColorSwitch})` }]}>
+                        <Image style={styles.fuelImage} source={require('@/assets/images/fuel.png')} />
+                        <Image style={styles.fuelImage} source={require('@/assets/images/fuel.png')} />
+                        <Image style={styles.fuelImage} source={require('@/assets/images/fuel.png')} />
+                    </TouchableOpacity>
                 </View>
 
-                {/* MISS */}
-                <Counter field="teleMissCoralCount" label="Missed coral:" type="coral-miss"></Counter>
+                <View style={styles.verticalContainer}>
+                    <StackedCounter value={state.teleFuelPassed} min={0} type='neutral' label="Fuel passed:" callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'teleFuelPassed', value }) }}></StackedCounter>
+                    <TouchableOpacity onPress={() => {
+                        bzzPlayer.seekTo(0);
+                        bzzPlayer.play();
+                    }} style={[styles.horizontalContainer, { filter: `invert(${funColorSwitch})` }]}>
+                        <Image style={styles.fuelImage} source={require('@/assets/images/magic-pass.png')} />
+                        <Image style={styles.fuelImage} source={require('@/assets/images/pass-bg.png')} />
+                        <Image style={styles.fuelImage} source={require('@/assets/images/magic-pass.png')} />
+                    </TouchableOpacity>
+                </View>
 
-                <View style={styles.algaeContainer}>
-
-
-                    <View style={styles.netContainer}>
-                        <Counter field="teleNetCount" label="Made Net:" type="algae-make"></Counter>
-
-                        <Counter field="teleMissNetCount" label="Missed Net:" type="algae-miss"></Counter>
-                    </View>
-
-                    <View style={styles.netContainer}>
-                        <Counter field="teleProcessorCount" label="Processor:" type="algae-make"></Counter>
-
-
-                        <TouchableOpacity style={[styles.algaeOperation, { backgroundColor: 'transparent' }]} onPress={handleAlgaePress}>
-                            <Animated.Image source={AlgaeImage} style={[styles.algaeImage, animatedStyle]}></Animated.Image>
-                        </TouchableOpacity>
-                    </View>
-
-
-
+                <View style={styles.verticalContainer}>
+                    <StackedCounter value={state.teleFuelDozed} min={0} type='neutral' label="Fuel pushed:" callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'teleFuelDozed', value }) }}></StackedCounter>
+                    <TouchableOpacity onPress={() => {
+                        woahPlayer.seekTo(0);
+                        woahPlayer.play();
+                    }} style={[styles.horizontalContainer, { filter: `invert(${funColorSwitch})` }]}>
+                        <Image style={styles.fuelImage} source={require('@/assets/images/dozer-bg.png')} />
+                        <Image style={styles.fuelImage} source={require('@/assets/images/dozer-bg.png')} />
+                        <Image style={styles.fuelImage} source={require('@/assets/images/dozer-bg.png')} />
+                    </TouchableOpacity>
                 </View>
 
 
+                <View style={[styles.verticalContainer, { borderWidth: state.playedDefense ? 2 : 0, borderRadius: 20, paddingTop: 15, borderColor: '#0000007e' }]}>
+                    <Checkbox value={state.playedDefense} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'playedDefense', value }) }} label="Played defense?"></Checkbox>
 
-                <Text style={styles.endgameTitle}>Endgame:</Text>
+                    {state.playedDefense &&
 
-                <Checkbox field="park" label="Parked:" ></Checkbox>
+                        <><SelectWithLabel label='Defense quality' itemLabelFormatter={(v: string) => { switch (v) { case '5': return 'Lights-out'; case '4': return 'Good'; case '3': return 'Average'; case '2': return 'Poor'; case '1': return 'Awful'; default: return 'n/a'; } }} selectedValue={String(state.defenseStrength)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defenseStrength', value }); }} /><Text style={{ fontSize: 18, marginHorizontal: 15, textAlign: 'center', }}>Where do they commonly defend? Select all that apply:</Text><View style={[styles.verticalContainer, { gap: 10 }]}>
+                            <Checkbox value={state.defendBumpTrench} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defendBumpTrench', value }); }} label="Trench or Bump"></Checkbox>
+                            <Checkbox value={state.defendAllianceZone} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defendAllianceZone', value }); }} label="Alliance Zone"></Checkbox>
+                            <Checkbox value={state.defendNeutral} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'defendNeutral', value }); }} label="Neutral Zone"></Checkbox>
+                        </View></>
 
-                <View style={[styles.horizontalContainer, { width: '90%', marginBottom: 25, }]}>
-                    <Text style={styles.label}>Climbed:</Text>
-                    <Picker
-                        style={styles.input}
-                        selectedValue={state.selectedClimb}
-                        onValueChange={(value) =>
-                            dispatch({ type: 'UPDATE_FIELD', field: 'selectedClimb', value })
-                        }>
-                        <Picker.Item label="No" value="No" />
-                        <Picker.Item label="Shallow ;)" value="Shallow" />
-                        <Picker.Item label="Deep" value="Deep" />
-                    </Picker>
+                    }
                 </View>
+
+                <Checkbox value={state.incurredPenalties} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'incurredPenalties', value }) }} label="Committed fouls?"></Checkbox>
 
             </View>
         </ScrollView>
@@ -115,29 +85,11 @@ const styles = StyleSheet.create({
     pageContainer: {
         flex: 1,
         paddingTop: 5,
+        gap: 35,
         alignItems: 'center',
         backgroundColor: '#FFF6EA',
-    },
-    input: {
-        height: 40,
-        margin: 12,
-        borderWidth: 1,
-        paddingLeft: 10,
-        fontSize: 20,
-        width: '50%',
-        borderRadius: 3,
-        borderColor: 'black',
-        backgroundColor: '#FFF6EA',
-        color: 'black',
-    },
-    warningText: {
-        fontSize: 20,
-        width: '90%',
-        textAlign: 'center',
-        color: 'white',
-        marginVertical: 15,
-        backgroundColor: 'teal',
-        padding: 10,
+        paddingBottom: 70,
+        paddingHorizontal: 5,
     },
     label: {
         fontSize: 20,
@@ -151,61 +103,9 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 25,
-        fontWeight: 'bold',
-        color: 'blue'
-    },
-    reefContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        width: '90%',
-        justifyContent: 'center',
-        alignItems: 'center',
+        color: '#0046b0ff',
+        fontFamily: 'Branding',
         marginTop: 25,
-        height: 330,
-        gap: 10,
-    },
-    reefImage: {
-        width: 75,
-        height: 300
-    },
-    reefOperationsContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        width: 280,
-        height: '100%'
-    },
-    reefOperation: {
-        display: 'flex',
-        flexDirection: 'row',
-        backgroundColor: '#e6d4c3',
-        paddingHorizontal: 15,
-        paddingVertical: 5,
-        borderRadius: 5,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 15
-    },
-    missContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        backgroundColor: '#f5a9a9',
-        paddingHorizontal: 15,
-        paddingVertical: 5,
-        borderRadius: 5,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 15,
-        width: '100%',
-        transform: [{ scale: 0.85 }],
-        marginTop: 15,
-    },
-    reefOperationLabel: {
-        fontSize: 32
-    },
-    reefOperationCount: {
-        fontSize: 44,
-        fontWeight: 'bold'
     },
     horizontalContainer: {
         display: 'flex',
@@ -213,56 +113,18 @@ const styles = StyleSheet.create({
         gap: 10,
         alignItems: 'center',
     },
-    algaeContainer: {
-        backgroundColor: '#58C0A7',
-        marginTop: 10,
-        width: '95%',
-        padding: 10,
-        borderRadius: 5,
-        gap: 10,
+    fuelImage: {
+        width: 100,
+        aspectRatio: 1,
     },
-    algaeOperation: {
+    verticalContainer: {
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#e6d4c3',
-        paddingHorizontal: 15,
-        paddingVertical: 5,
-        borderRadius: 5,
+        justifyContent: 'center',
         alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 15,
-        width: '45%'
-    },
-    algaeOperationLabel: {
-        fontSize: 24
-    },
-    netContainer: {
+        gap: 5,
         width: '100%',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-    algaeImage: {
-        width: '100%',
-        height: '100%',
-    },
-    checkbox: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 25,
-        backgroundColor: '#e6d4c3',
-        padding: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-        gap: 10,
-    },
-    checkboxText: {
-        fontSize: 24
-    },
-    endgameTitle: {
-        fontSize: 36,
-        marginTop: 25
+        marginBottom: 25,
     }
 });
 

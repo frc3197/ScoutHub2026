@@ -1,8 +1,9 @@
+import NumberInputWithLabel from '@/components/form/NumberInputWithLabel';
+import SelectWithLabel from '@/components/form/SelectWithLabel';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useForm } from '../../../components/match-form';
 import { FeedbackDatabase } from '../../feedbacksupabasetypes';
 import { EVENT_KEY } from '../../misc/EVENT_KEY';
@@ -13,28 +14,9 @@ const GeneralScreen = () => {
     const { state, dispatch } = useForm();
     const router = useRouter();
 
-    const [predictedAlliance, setPredictedAlliance] = React.useState('red');
-    const [wagerAmount, setWagerAmount] = React.useState(1);
-    const [showWager, setShowWager] = React.useState(true);
-
     const [scoutNames, setScoutNames] = React.useState<FeedbackDatabase['public']['Tables']['members']['Row'][]>([]);
 
     const [localTeamNumber, setLocalTeamNumber] = React.useState<string>('');
-
-    React.useEffect(() => {
-        async function getShowWager() {
-            try {
-                const show = await AsyncStorage.getItem('showWager');
-                console.log(show)
-                if (show !== null) {
-                    setShowWager(show === 'true');
-                }
-            } catch (e) {
-                alert('Failed to save wagerAmount to storage' + e);
-            }
-        }
-        getShowWager();
-    });
 
     React.useEffect(() => {
         async function getNames() {
@@ -45,7 +27,35 @@ const GeneralScreen = () => {
         getNames();
     }, []);
 
-    const teams = useTeamList('2025wimc');
+    const teams = useTeamList(EVENT_KEY);
+
+    const nameChangeCallback = (name: string) => {
+        dispatch({ type: 'UPDATE_FIELD', field: 'nameText', value: name });
+        if (name != 'GUEST') {
+            const parsed = JSON.parse(name);
+            AsyncStorage.setItem('uuid', parsed['id']);
+        } else {
+            AsyncStorage.setItem('uuid', 'GUEST');
+        }
+    }
+
+    const nameLabelFormatter = (item: string) => {
+        if (item == 'GUEST')
+            return 'GUEST';
+
+        const parsed = JSON.parse(item) as {
+            clocked_in: boolean;
+            created_at: string;
+            email: string | null;
+            first_name: string | null;
+            id: string;
+            last_initial: string | null;
+        };
+        if (parsed['first_name'] && parsed['last_initial'])
+            return parsed['first_name'] + ' ' + parsed['last_initial'];
+
+        return 'UNKNOWN';
+    }
 
     return (
         <ScrollView style={styles.scrollView}>
@@ -53,54 +63,23 @@ const GeneralScreen = () => {
 
                 <Text style={styles.warningText}>This page is for PRACTICE SCOUTING only!!! DO NOT SCOUT QUALIFICATION OR PRE-SCOUTING MATCHES HERE! To scout those, go to the home page.</Text>
 
-                <View style={styles.horizontalContainer}>
-                    <Text style={styles.label}>Scout name:</Text>
-                    <Picker
-                        style={styles.input}
-                        selectedValue={state.nameText}
-                        onValueChange={(value:string) => {
-                            dispatch({ type: 'UPDATE_FIELD', field: 'nameText', value });
-                            if (value != 'GUEST') {
-                                const parsed = JSON.parse(value);
-                                AsyncStorage.setItem('uuid', parsed['id']);
-                            } else {
-                                AsyncStorage.setItem('uuid', 'GUEST' );
-                            }
-                            //alert(AsyncStorage.getItem('uuid'))
-                        }
-                        }>
-                        <Picker.Item label="GUEST" value="GUEST" />
-                        {
-                            [...scoutNames].sort((a, b) => (a['first_name'] ?? '').localeCompare(b['first_name'] ?? '')).map((item, index) => {
-                                return <Picker.Item value={JSON.stringify(item)} label={`${item['first_name']} ${item['last_initial']}`} key={index} />
-                            })
-                        }
-                    </Picker>
-                </View>
+                <SelectWithLabel label='Scout name:' selectedValue={state.nameText} itemLabelFormatter={nameLabelFormatter} callback={nameChangeCallback} items={['GUEST', ...[...scoutNames].sort((a, b) => (a['first_name'] ?? '').localeCompare(b['first_name'] ?? '')).map((v, i) => JSON.stringify(v))]} />
 
-                <View style={styles.horizontalContainer}>
-                    <Text style={styles.label}>Team #:</Text>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={(text) => {
-                            dispatch({ type: 'UPDATE_FIELD', field: 'teamNumber', value: text });
-                            setLocalTeamNumber(text);
-                        }
-                        }
-                        value={state.teamNumber}
-                        keyboardType="numeric"
-                        placeholderTextColor='grey'
-                        placeholder='ex. 9997'
-                    />
-                </View>
-
-                <Text style={styles.warningText}>Please check the team number! It is impossible to check team numbers in practice scouting, please be careful</Text>
+                <NumberInputWithLabel label='Team #:' value={state.teamNumber} placeholder='ex. 9997' callback={(text: string) => {
+                    dispatch({ type: 'UPDATE_FIELD', field: 'teamNumber', value: text });
+                    setLocalTeamNumber(text);
+                }} onBlur={() => {
+                    if (!teams.includes(parseInt(localTeamNumber))) {
+                        alert(`Team ${localTeamNumber} not found at event, please double check that they exist!!!`);
+                    }
+                }
+                } />
 
             </View>
         </ScrollView>
     );
 
-    function useTeamList(eventKey = EVENT_KEY):number[] {
+    function useTeamList(eventKey = EVENT_KEY): number[] {
         const [teams, setTeams] = React.useState<number[]>([]);
 
         React.useEffect(() => {
@@ -145,30 +124,14 @@ const styles = StyleSheet.create({
         width: '100%',
         backgroundColor: '#FFF6EA',
     },
-    input: {
-        height: 40,
-        margin: 12,
-        borderWidth: 1,
-        paddingLeft: 10,
+    teamNumberWarning: {
         fontSize: 20,
-        width: '50%',
-        borderRadius: 3,
-        borderColor: 'black',
-        backgroundColor: '#FFF6EA',
-        color: 'black',
-    },
-    horizontalContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: '100%',
-        justifyContent: 'center',
-    },
-    label: {
-        fontSize: 20,
-        width: '33%',
-        textAlign: 'right',
-        fontWeight: 'bold',
+        width: '90%',
+        textAlign: 'center',
+        color: '#F37621',
+        marginTop: 35,
+        fontFamily: 'Lexend-Regular',
+        textDecorationLine: 'underline',
     },
     warningText: {
         fontSize: 20,
@@ -178,17 +141,6 @@ const styles = StyleSheet.create({
         marginVertical: 15,
         backgroundColor: 'red',
         padding: 10,
-    },
-    wagerContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        marginVertical: 25,
-        backgroundColor: '#e6d4c3',
-        padding: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-        gap: 10,
     },
 });
 

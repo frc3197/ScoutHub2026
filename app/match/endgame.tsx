@@ -13,10 +13,10 @@ const TeleScreen = () => {
             <View style={styles.pageContainer}>
                 <Text style={styles.title}>ENDGAME</Text>
 
-                <View style={[styles.verticalContainer, { borderWidth: state.climbType != 'No attempt' ? 2 : 0, borderRadius: 20, borderColor: '#0000007e' }]}>
-                    <SelectWithLabel label='Climb outcome' selectedValue={String(state.climbType)} items={['No attempt', 'Failed', 'L1', 'L2', 'L3']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'climbType', value }) }} />
+                <View style={[styles.verticalContainer, { borderWidth: state.climbType != 'None' ? 2 : 0, borderRadius: 20, borderColor: '#0000007e' }]}>
+                    <SelectWithLabel label='Climb outcome' selectedValue={String(state.climbType)} items={['None', 'Failed', 'L1', 'L2', 'L3']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'climbType', value }) }} />
 
-                    {state.climbType != 'No attempt' &&
+                    {state.climbType != 'None' &&
                         <><SelectWithLabel label='Climb location' selectedValue={String(state.teleClimbLocation)} items={['Outpost side', 'Center', 'Depot side']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'teleClimbLocation', value }); }} /><NumberInputWithLabel label='Climb time:' value={state.teleClimbTime} placeholder='ex. 21' callback={(text: string) => dispatch({ type: 'UPDATE_FIELD', field: 'teleClimbTime', value: text })} /></>
 
                     }

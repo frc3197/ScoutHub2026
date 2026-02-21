@@ -1,108 +1,58 @@
-// @ts-ignore
-import AlgaeImage from '@/assets/images/algae.png';
-// @ts-ignore
-import ReefImage from '@/assets/images/reef.png';
-import { Picker } from '@react-native-picker/picker';
+import SelectWithLabel from '@/components/form/SelectWithLabel';
 import React from 'react';
-import { Animated, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import Checkbox from '../../../components/form/checkbox';
-import Counter from '../../../components/form/StackedCounter';
+import StackedCounter from '../../../components/form/StackedCounter';
 import { useForm } from '../../../components/match-form';
-import { Database } from '../../supabasetypes';
 
 const AutoScreen = () => {
 
     const { state, dispatch } = useForm();
-
-    const rotateAnim = React.useRef(new Animated.Value(0)).current;
-    const [rotated, setRotated] = React.useState(false);
-
-    const rotateInterpolate = rotateAnim.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['0deg', '360deg'],
-    });
-
-    const animatedStyle = {
-        transform: [{ rotate: rotateInterpolate }],
-    };
-
-    const handleAlgaePress = () => {
-        Animated.timing(rotateAnim, {
-            toValue: rotated ? 0 : 1,
-            duration: 500,
-            useNativeDriver: true,
-        }).start(() => {
-            setRotated(!rotated);
-        });
-    };
 
     return (
         <ScrollView style={styles.scrollView}>
             <View style={styles.pageContainer}>
                 <Text style={styles.title}>AUTONOMOUS MODE</Text>
 
-<Text style={styles.warningText}>This page is for PRE SCOUTING only!!! DO NOT SCOUT QUALIFICATION OR PRACTICE MATCHES HERE! To scout those, go to the home page.</Text>
-                <View style={[styles.horizontalContainer, { width: '90%', marginTop: 15, }]}>
-                    <Text style={styles.label}>Starting position:</Text>
-                    <Picker
-                        style={styles.input}
-                        selectedValue={state.selectedStartPosition}
-                        onValueChange={(value: Database['public']['Enums']['autostartpositionsreefscape']) =>
-                            dispatch({ type: 'UPDATE_FIELD', field: 'selectedStartPosition', value })
-                        }>
-                        <Picker.Item label="Far" value="Far" />
-                        <Picker.Item label="Center" value="Center" />
-                        <Picker.Item label="Processor" value="Processor" />
-                    </Picker>
+                <SelectWithLabel label='Starting position:' selectedValue={state.selectedStartPosition} items={[
+                    "center-hub",
+                    "outpost-bump",
+                    "outpost-trench",
+                    "depot-bump",
+                    "depot-trench"
+                ]} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'selectedStartPosition', value }) }} />
+
+
+                <StackedCounter value={state.fuelTakenFromNeutralZone} min={0} type='small' label="Fuel taken from NZ:" callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'fuelTakenFromNeutralZone', value }) }}></StackedCounter>
+
+
+                <View style={{ borderWidth: state.autoClimb ? 2 : 0, borderRadius: 20, borderColor: '#0000007e', paddingTop: 15, width: '100%' }}>
+                    <Checkbox value={state.autoClimb} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'autoClimb', value }) }} label="L1 Climb:"></Checkbox>
+
+                    {state.autoClimb &&
+                        <SelectWithLabel label='Climb location:' selectedValue={state.autoClimbLocation} items={['center', 'outpost', 'depot']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'autoClimbLocation', value }) }} />
+                    }
                 </View>
 
-                <View style={styles.reefContainer}>
-                    <Image source={ReefImage} style={styles.reefImage}></Image>
-                    <View style={styles.reefOperationsContainer}>
+                <Checkbox value={state.autoDepot} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'autoDepot', value }) }} label="Used depot?"></Checkbox>
+                <Checkbox value={state.autoOutpost} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'autoOutpost', value }) }} label="Used outpost?"></Checkbox>
 
-                        {/* LEVEL FOUR */}
-                        <Counter field="autoL4Count" label="L4:" type="coral-make"></Counter>
+                <SelectWithLabel label='Auto SOS:' itemLabelFormatter={(v: string) => { switch (v) { case '5': return 'Excellent'; case '4': return 'Good'; case '3': return 'Medium'; case '2': return 'Poor'; case '1': return 'Awful/None'; default: return 'n/a'; } }} selectedValue={String(state.autoStrengthOfShooting)} items={['5', '4', '3', '2', '1']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'autoStrengthOfShooting', value }) }} />
 
-                        {/* LEVEL THREE */}
-                        <Counter field="autoL3Count" label="L3:" type="coral-make"></Counter>
-
-                        {/* LEVEL TWO */}
-                        <Counter field="autoL2Count" label="L2:" type="coral-make"></Counter>
-
-                        {/* LEVEL ONE */}
-                        <Counter field="autoL1Count" label="L1:" type="coral-make"></Counter>
-
-
-                    </View>
+                <View style={styles.verticalContainer}>
+                    <Text style={styles.commentLabel}>Team's strategies:</Text>
+                    <TextInput
+                        style={styles.issuesInput}
+                        onChangeText={(text) =>
+                            dispatch({ type: 'UPDATE_FIELD', field: 'autoIssues', value: text })
+                        }
+                        value={state.autoIssues}
+                        placeholderTextColor='grey'
+                        placeholder='Any auto issues (ie stuck on bump)? This can be left blank.'
+                        multiline={true}
+                        numberOfLines={4}
+                    />
                 </View>
-
-                {/* MISS */}
-                <Counter field="autoMissCoralCount" label="Missed coral:" type="coral-miss"></Counter>
-
-                <View style={styles.algaeContainer}>
-
-
-                    <View style={styles.netContainer}>
-                        <Counter field="autoNetCount" label="Made Net:" type="algae-make"></Counter>
-
-                        <Counter field="autoMissNetCount" label="Missed Net:" type="algae-miss"></Counter>
-                    </View>
-
-                    <View style={styles.netContainer}>
-                        <Counter field="autoProcessorCount" label="Processor:" type="algae-make"></Counter>
-
-
-                        <TouchableOpacity style={[styles.algaeOperation, { backgroundColor: 'transparent' }]} onPress={handleAlgaePress}>
-                            <Animated.Image source={AlgaeImage} style={[styles.algaeImage, animatedStyle]}></Animated.Image>
-                        </TouchableOpacity>
-                    </View>
-
-
-
-                </View>
-
-
-                <Checkbox field="leave" label="Ended off start line:"></Checkbox>
 
             </View>
         </ScrollView>
@@ -113,29 +63,11 @@ const styles = StyleSheet.create({
     pageContainer: {
         flex: 1,
         paddingTop: 5,
+        paddingHorizontal: 5,
+        gap: 25,
         alignItems: 'center',
         backgroundColor: '#FFF6EA',
-    },
-    input: {
-        height: 40,
-        margin: 12,
-        borderWidth: 1,
-        paddingLeft: 10,
-        fontSize: 20,
-        width: '50%',
-        borderRadius: 3,
-        borderColor: 'black',
-        backgroundColor: '#FFF6EA',
-        color: 'black',
-    },
-    warningText: {
-        fontSize: 20,
-        width: '90%',
-        textAlign: 'center',
-        color: 'white',
-        marginVertical: 15,
-        backgroundColor: 'teal',
-        padding: 10,
+        paddingBottom: 50,
     },
     label: {
         fontSize: 20,
@@ -149,61 +81,9 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 25,
-        fontWeight: 'bold',
-        color: '#b00c00'
-    },
-    reefContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        width: '90%',
-        justifyContent: 'center',
-        alignItems: 'center',
+        color: '#b00c00',
+        fontFamily: 'Branding',
         marginTop: 25,
-        height: 330,
-        gap: 10,
-    },
-    reefImage: {
-        width: 75,
-        height: 300
-    },
-    reefOperationsContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        width: 280,
-        height: '100%'
-    },
-    reefOperation: {
-        display: 'flex',
-        flexDirection: 'row',
-        backgroundColor: '#e6d4c3',
-        paddingHorizontal: 15,
-        paddingVertical: 5,
-        borderRadius: 5,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 15
-    },
-    missContainer: {
-        display: 'flex',
-        flexDirection: 'row',
-        backgroundColor: '#f5a9a9',
-        paddingHorizontal: 15,
-        paddingVertical: 5,
-        borderRadius: 5,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 15,
-        width: '100%',
-        transform: [{ scale: 0.85 }],
-        marginTop: 15,
-    },
-    reefOperationLabel: {
-        fontSize: 32
-    },
-    reefOperationCount: {
-        fontSize: 44,
-        fontWeight: 'bold'
     },
     horizontalContainer: {
         display: 'flex',
@@ -211,38 +91,44 @@ const styles = StyleSheet.create({
         gap: 10,
         alignItems: 'center',
     },
-    algaeContainer: {
-        backgroundColor: '#58C0A7',
-        marginTop: 10,
-        width: '95%',
+    issuesInput: {
+        height: 110,
+        margin: 12,
+        marginTop: 20,
+        borderWidth: 2,
         padding: 10,
-        borderRadius: 5,
-        gap: 10,
+        paddingTop: 25,
+        fontSize: 20,
+        width: '93.5%',
+        borderRadius: 10,
+        borderColor: '#0000007e',
+        backgroundColor: '#FFF6EA',
+        color: 'black',
+        marginBottom: 0,
+        fontFamily: 'Poppins-Light',
     },
-    algaeOperation: {
+    verticalContainer: {
+        marginTop: 25,
+        width: '95%',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#e6d4c3',
-        paddingHorizontal: 15,
-        paddingVertical: 5,
+        alignItems: 'flex-start',
+    },
+    commentLabel: {
+        fontSize: 20,
+        width: 'auto',
+        textAlign: 'left',
+        fontWeight: 'bold',
+        position: 'absolute',
+        zIndex: 5,
+        backgroundColor: '#FFF6EA',
+        padding: 5,
+        paddingHorizontal: 10,
+        borderWidth: 2,
         borderRadius: 5,
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: 15,
-        width: '45%'
-    },
-    algaeOperationLabel: {
-        fontSize: 24
-    },
-    netContainer: {
-        width: '100%',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between'
-    },
-    algaeImage: {
-        width: '100%',
-        height: '100%',
+        borderColor: '#0000007e',
+        marginLeft: 20,
+        fontFamily: 'Lexend-Regular',
     },
 });
 

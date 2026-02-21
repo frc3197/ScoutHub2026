@@ -19,6 +19,13 @@ const TeleScreen = () => {
 
     const [funColorSwitch, setFunColorSwitch] = useState(0);
 
+    const shotLocations = [
+        "hub-close"
+        , "anywhere"
+        , "known-medium"
+        , "cannot-shoot"
+    ]
+
     return (
         <ScrollView style={styles.scrollView}>
             <View style={styles.pageContainer}>
@@ -48,7 +55,7 @@ const TeleScreen = () => {
                 </View>
 
                 <View style={styles.verticalContainer}>
-                    <StackedCounter value={state.teleFuelPushed} min={0} type='neutral' label="Fuel pushed:" callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'teleFuelPushed', value }) }}></StackedCounter>
+                    <StackedCounter value={state.teleFuelDozed} min={0} type='neutral' label="Fuel pushed:" callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'teleFuelDozed', value }) }}></StackedCounter>
                     <TouchableOpacity onPress={() => {
                         woahPlayer.seekTo(0);
                         woahPlayer.play();
@@ -60,7 +67,7 @@ const TeleScreen = () => {
                 </View>
 
 
-                <View style={[styles.verticalContainer, { borderWidth: state.playedDefense ? 2 : 0, borderRadius: 20, paddingVertical: 15, borderColor: '#0000007e' }]}>
+                <View style={[styles.verticalContainer, { borderWidth: state.playedDefense ? 2 : 0, borderRadius: 20, paddingTop: 15, borderColor: '#0000007e' }]}>
                     <Checkbox value={state.playedDefense} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'playedDefense', value }) }} label="Played defense?"></Checkbox>
 
                     {state.playedDefense &&
@@ -76,6 +83,10 @@ const TeleScreen = () => {
 
                 <Checkbox value={state.incurredPenalties} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'incurredPenalties', value }) }} label="Committed fouls?"></Checkbox>
 
+                <SelectWithLabel label='How defendable?' itemLabelFormatter={(v: string) => { switch (v) { case '1': return 'Extremely prone to defense'; case '2': return 'Somewhat defendable'; case '3': return 'Hard to defend'; default: return 'n/a'; } }} selectedValue={String(state.howDefendable)} items={['1', '2', '3']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'howDefendable', value }); }} />
+
+                <SelectWithLabel label='Where can they shoot?'  selectedValue={String(state.shotLocations)} items={shotLocations} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'shotLocations', value }); }} />
+
             </View>
         </ScrollView>
     );
@@ -88,7 +99,7 @@ const styles = StyleSheet.create({
         gap: 35,
         alignItems: 'center',
         backgroundColor: '#FFF6EA',
-        paddingBottom: 50,
+        paddingBottom: 70,
         paddingHorizontal: 5,
     },
     label: {
