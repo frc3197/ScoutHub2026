@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      "Fetched Team Data": {
+        Row: {
+          ai_overview: string | null
+          epa: number
+          last_updated: string
+          primary_hex: string | null
+          robot_image: string | null
+          secondary_hex: string | null
+          team: number
+          team_icon: string | null
+          team_name: string
+        }
+        Insert: {
+          ai_overview?: string | null
+          epa?: number
+          last_updated?: string
+          primary_hex?: string | null
+          robot_image?: string | null
+          secondary_hex?: string | null
+          team?: number
+          team_icon?: string | null
+          team_name?: string
+        }
+        Update: {
+          ai_overview?: string | null
+          epa?: number
+          last_updated?: string
+          primary_hex?: string | null
+          robot_image?: string | null
+          secondary_hex?: string | null
+          team?: number
+          team_icon?: string | null
+          team_name?: string
+        }
+        Relationships: []
+      }
       "Live Data": {
         Row: {
           auto_climb: boolean
@@ -161,30 +197,42 @@ export type Database = {
       "Pit Scouting": {
         Row: {
           auto_description: string
+          bump: boolean
+          climb_type: Database["public"]["Enums"]["climber_type_rebuilt"]
           comments: string
           created_at: string
           driver_experience: string
-          endgame_description: string
+          hopper_size: number
           id: number
+          shooter_type: Database["public"]["Enums"]["shooter_type_rebuilt"]
           team_number: number
+          trench: boolean
         }
         Insert: {
           auto_description: string
+          bump: boolean
+          climb_type: Database["public"]["Enums"]["climber_type_rebuilt"]
           comments: string
           created_at?: string
           driver_experience: string
-          endgame_description: string
+          hopper_size?: number
           id?: number
+          shooter_type: Database["public"]["Enums"]["shooter_type_rebuilt"]
           team_number?: number
+          trench: boolean
         }
         Update: {
           auto_description?: string
+          bump?: boolean
+          climb_type?: Database["public"]["Enums"]["climber_type_rebuilt"]
           comments?: string
           created_at?: string
           driver_experience?: string
-          endgame_description?: string
+          hopper_size?: number
           id?: number
+          shooter_type?: Database["public"]["Enums"]["shooter_type_rebuilt"]
           team_number?: number
+          trench?: boolean
         }
         Relationships: []
       }
@@ -203,11 +251,18 @@ export type Database = {
         | "outpost-trench"
         | "depot-trench"
       autostartpositionsreefscape: "Far" | "Center" | "Processor"
+      climber_type_rebuilt: "No Climber" | "L1" | "L2" | "L3"
       climbpositionsrebuilt: "center" | "outpost" | "depot"
       driverstation: "B1" | "B2" | "B3" | "R1" | "R2" | "R3"
       endgametyperebuilt: "L3" | "L2" | "L1" | "None" | "Failed"
       endgametypereefscape: "Nothing" | "Park" | "Shallow" | "Deep"
       matchscouttype: "match" | "pre" | "practice"
+      shooter_type_rebuilt:
+        | "None"
+        | "Turret/s"
+        | "Fixed Single"
+        | "Fixed Double"
+        | "Fixed 3+"
       shotlocationsrebuilt:
         | "hub-close"
         | "anywhere"
@@ -348,11 +403,19 @@ export const Constants = {
         "depot-trench",
       ],
       autostartpositionsreefscape: ["Far", "Center", "Processor"],
+      climber_type_rebuilt: ["No Climber", "L1", "L2", "L3"],
       climbpositionsrebuilt: ["center", "outpost", "depot"],
       driverstation: ["B1", "B2", "B3", "R1", "R2", "R3"],
       endgametyperebuilt: ["L3", "L2", "L1", "None", "Failed"],
       endgametypereefscape: ["Nothing", "Park", "Shallow", "Deep"],
       matchscouttype: ["match", "pre", "practice"],
+      shooter_type_rebuilt: [
+        "None",
+        "Turret/s",
+        "Fixed Single",
+        "Fixed Double",
+        "Fixed 3+",
+      ],
       shotlocationsrebuilt: [
         "hub-close",
         "anywhere",

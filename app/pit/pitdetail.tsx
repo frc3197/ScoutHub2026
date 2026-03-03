@@ -1,3 +1,6 @@
+import Checkbox from '@/components/form/checkbox';
+import NumberInputWithLabel from '@/components/form/NumberInputWithLabel';
+import SelectWithLabel from '@/components/form/SelectWithLabel';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
@@ -40,7 +43,7 @@ export default function PitDetail() {
             <TextInput
               style={styles.textInput}
               placeholderTextColor='grey'
-              placeholder='Write "same" if they are the same drivers or describe how much drive time the new ones have'
+              placeholder="Describe their drivers' experience & practice/strengths."
               multiline={true}
               numberOfLines={3}
               onChangeText={(text) =>
@@ -49,36 +52,18 @@ export default function PitDetail() {
             />
           </View>
 
-          <View style={styles.verticalContainer}>
-            <Text style={styles.textInputLabel}>What is their climb like?</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholderTextColor='grey'
-              placeholder='Ask about level (deep, shallow, none), how long it takes, consistency, etc.'
-              multiline={true}
-              numberOfLines={3}
-              onChangeText={(text) =>
-                dispatch({ type: 'UPDATE_FIELD', field: 'endgame_description', value: text })
-              }
-            />
-          </View>
+          <Checkbox value={state.bump} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'bump', value }); }} label="Can traverse bump"></Checkbox>
+
+          <Checkbox value={state.trench} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'trench', value }); }} label="Can fit under trench"></Checkbox>
+
+          <NumberInputWithLabel label='Estimated hopper capacity:' value={String(state.hopper_size)} placeholder='ex. 24' callback={(text: string) => dispatch({ type: 'UPDATE_FIELD', field: 'hopper_size', value: text })} />
+
+          <SelectWithLabel label='Climb type: ' selectedValue={state.climb_type} items={['None', 'L1', 'L2', 'L3']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'climb_type', value }) }} />
+
+          <SelectWithLabel label='Shooter type: ' selectedValue={state.shooter_type} items={['None', 'Turret/s', 'Fixed Single', 'Fixed Double', 'Fixed 3+']} callback={(value) => { dispatch({ type: 'UPDATE_FIELD', field: 'shooter_type', value }) }} />
 
           <View style={styles.verticalContainer}>
-            <Text style={styles.textInputLabel}>What is their algae game like?</Text>
-            <TextInput
-              style={styles.textInput}
-              placeholderTextColor='grey'
-              placeholder='Ask if they can pick up ground algae, score in net or processor, how long it takes, consistency, etc.'
-              multiline={true}
-              numberOfLines={3}
-              onChangeText={(text) =>
-                dispatch({ type: 'UPDATE_FIELD', field: 'algae_description', value: text })
-              }
-            />
-          </View>
-
-          <View style={styles.verticalContainer}>
-            <Text style={styles.textInputLabel}>Any final words about the team?</Text>
+            <Text style={styles.textInputLabel}>Any final words about the team? Touch on strategy here.</Text>
             <TextInput
               style={styles.textInput}
               placeholderTextColor='grey'
@@ -108,7 +93,6 @@ async function submitForm(state, dispatch) {
   console.log('Submitting form...');
 
   try {
-    // Submit to Firestore
     const { error } = await supabase.from('Pit Scouting').insert(
       state
     );

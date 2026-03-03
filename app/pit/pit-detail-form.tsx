@@ -1,22 +1,23 @@
-import { Database } from '@/app/supabasetypes';
+import { Database } from '@/app/database.types';
 import { createContext, Dispatch, useContext, useReducer } from 'react';
 
 type PitScoutingRow = Database['public']['Tables']['Pit Scouting']['Row'];
 
 type PitFormState = Pick<
   PitScoutingRow,
-  'team_number' | 'driver_experience' | 'algae_description' | 'auto_description' | 'comments' | 'endgame_description'
+  'team_number' | 'driver_experience' | 'auto_description' | 'hopper_size' | 'shooter_type' | 'bump' | 'trench' | 'climb_type' | 'comments'
 >;
 
 const initialState: PitFormState = {
   team_number: -1,
+  auto_description: '',
   driver_experience: '',
-  hopper_size: '',
-  bump: '',
-  trench: '',
-  climb_type: '',
-  comments,
-  
+  hopper_size: -1,
+  shooter_type: 'None',
+  bump: false,
+  trench: false,
+  climb_type: 'No Climber',
+  comments: '',
 };
 
 type Action =
