@@ -1,6 +1,6 @@
 // @ts-ignore
 import Logo from '@/assets/images/icon.png';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { useRouter } from 'expo-router';
@@ -51,10 +51,10 @@ const HomeScreen = () => {
   const button3AnimatedStyle = useAnimatedStyle(() => ({
     opacity: button3Opacity.value,
   }));
-  
+
   const hexhoundScale = useSharedValue<number>(0);
   const hexhoundScaleStyle = useAnimatedStyle(() => ({
-    transform: [{scale: hexhoundScale.value}]
+    transform: [{ scale: hexhoundScale.value }]
   }));
 
   React.useEffect(() => {
@@ -73,11 +73,11 @@ const HomeScreen = () => {
     <ScrollView style={styles.scrollView}>
       <View style={styles.pageContainer}>
         <Animated.Text style={[styles.titleText, titleAnimatedStyle]}>Welcome, scouter!</Animated.Text>
-        
+
         <Animated.Image source={Logo} style={[styles.logoStyle, hexhoundScaleStyle]}></Animated.Image>
 
 
-        <Animated.View style={[button1AnimatedStyle, {width: '100%', alignItems: 'center'}]}>
+        <Animated.View style={[button1AnimatedStyle, { width: '100%', alignItems: 'center' }]}>
           <TouchableOpacity style={styles.matchButton}
             onPress={() => router.push('/match')}
           >
@@ -86,7 +86,7 @@ const HomeScreen = () => {
         </Animated.View>
 
 
-        <Animated.View style={[button2AnimatedStyle, {width: '100%', alignItems: 'center'}]}>
+        <Animated.View style={[button2AnimatedStyle, { width: '100%', alignItems: 'center' }]}>
           <TouchableOpacity style={styles.pitButton}
             onPress={() => router.push('/pit')}
           >
@@ -94,7 +94,7 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </Animated.View>
 
-        <Animated.View style={[button3AnimatedStyle, {width: '100%', alignItems: 'center'}]}>
+        <Animated.View style={[button3AnimatedStyle, { width: '100%', alignItems: 'center' }]}>
           <View style={styles.smallButtonContainer}>
 
             <TouchableOpacity style={styles.smallAnalysisButton}
@@ -103,10 +103,18 @@ const HomeScreen = () => {
               <Ionicons name={'analytics-outline'} size={40} color={'white'} />
             </TouchableOpacity>
 
+            {/*
             <TouchableOpacity style={styles.smallAdminButton}
               onPress={() => router.push('/admin')}
             >
               <Ionicons name={'lock-closed-outline'} size={30} color={'white'} />
+            </TouchableOpacity>
+            */}
+
+            <TouchableOpacity style={styles.smallAdminButton}
+              onPress={() => router.push('/offline')}
+            >
+              <Ionicons name={'cloud-offline-outline'} size={30} color={'white'} />
             </TouchableOpacity>
 
           </View>

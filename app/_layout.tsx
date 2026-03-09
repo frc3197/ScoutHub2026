@@ -92,5 +92,11 @@ export default function RootLayout() {
       headerLeft: () => <CustomBackButton />,
     }} />
 
+    <Stack.Screen name='offline' options={{
+      title: 'Offline Data',
+      animation: 'slide_from_right',
+      headerLeft: () => <CustomBackButton />,
+    }} />
+
   </Stack>
 };
