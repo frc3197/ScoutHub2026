@@ -1,1 +1,1 @@
-export const EVENT_KEY = '2026wiply';
+export const EVENT_KEY = '2026wiapp';

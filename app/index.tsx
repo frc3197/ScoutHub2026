@@ -120,7 +120,7 @@ const HomeScreen = () => {
           </View>
         </Animated.View>
 
-        <Text style={styles.footer}>Comp: 2026-PLY, Version: 2.0 {'\n'} FRC 3197 & Mason McManus</Text>
+        <Text style={styles.footer}>Comp: 2026-APP, Version: 2.2 {'\n'} FRC 3197 & Mason McManus</Text>
       </View>
     </ScrollView>
   );
