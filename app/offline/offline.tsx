@@ -64,7 +64,7 @@ const OfflineScreen = () => {
                 <Text style={styles.titleText}>Offline Data</Text>
 
                 <View style={{ display: 'flex', flexDirection: 'column', gap: 15, paddingHorizontal: 10, alignItems: 'center', marginBottom: 25, }}>
-                    <Text style={[styles.normalText, { marginBottom: 0, }]}>There have been many reports of the event having terrible WIFI/data connection. Therefore, I am staying up very late to solve this issue. It is currently 23:00. I will let you know the end time :). It is ok because I hear a train. And now it is 23:10.</Text>
+                    <Text style={[styles.normalText, { marginBottom: 0, }]}>The offline mode is useful in venues with poor connection. Simply save & upload the data later!</Text>
 
                     {offlineData.length < 1 && <Text style={[styles.normalText, { fontSize: 30, }]}>No offline data found. Try refreshing the entire page.</Text>}
 

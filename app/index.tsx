@@ -1,5 +1,5 @@
 // @ts-ignore
-import Logo from '@/assets/images/icon.png';
+import Logo from '@/assets/images/icon-dcmp.png';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
@@ -120,7 +120,7 @@ const HomeScreen = () => {
           </View>
         </Animated.View>
 
-        <Text style={styles.footer}>Comp: 2026-APP, Version: 2.2 {'\n'} FRC 3197 & Mason McManus</Text>
+        <Text style={styles.footer}>Comp: 2026-DCMP, Version: 2.3 {'\n'} FRC 3197 & Mason McManus</Text>
       </View>
     </ScrollView>
   );
